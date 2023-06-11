@@ -7,11 +7,10 @@ function App() {
 
   return (
     <div className="App">
-      Hello World
-      <img src="../assets/icon.svg" alt="icon" height={256} width={256} />
+      <link rel="stylesheet" href="App.css"></link>
       <body id="spawning-admin-panel">
         <div className="content">
-          <h1>Report Card</h1>
+          <span><img src="../assets/icon.svg" alt="icon" height={128} width={128} /><h1>Report Card</h1></span>
           <div id="domain_total"></div>
           <div id="images_total"></div>
           <div id="audio_total"></div>

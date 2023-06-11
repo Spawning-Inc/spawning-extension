@@ -37,6 +37,7 @@ module.exports = {
             patterns: [
                 { from: "manifest.json", to: "../manifest.json" },
                 { from: "spawning-chrome-extension/src/assets", to: "../assets" },
+                { from: "spawning-chrome-extension/src/App.css", to: "../js/App.css" }, // Add this line to copy the App.css file
             ],
         }),
         ...getHtmlPlugins(["index", "options"]),
