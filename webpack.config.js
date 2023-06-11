@@ -5,6 +5,9 @@ const CopyPlugin = require("copy-webpack-plugin");
 module.exports = {
     entry: {
         index: "./spawning-chrome-extension/src/index.tsx",
+        background: "./spawning-chrome-extension/src/background.tsx",
+        content: "./spawning-chrome-extension/src/content.tsx",
+        options: "./spawning-chrome-extension/src/options.tsx",
     },
     mode: "production",
     module: {
@@ -35,7 +38,7 @@ module.exports = {
                 { from: "spawning-chrome-extension/src/assets", to: "../assets" },
             ],
         }),
-        ...getHtmlPlugins(["index"]),
+        ...getHtmlPlugins(["index", "options"]),
     ],
     resolve: {
         extensions: [".tsx", ".ts", ".js"],
@@ -52,6 +55,7 @@ function getHtmlPlugins(chunks) {
             new HTMLPlugin({
                 title: "React extension",
                 filename: `${chunk}.html`,
+                template: path.resolve(__dirname, `./spawning-chrome-extension/src/${chunk}.html`), // specify your HTML file as the template
                 chunks: [chunk],
             })
     );
