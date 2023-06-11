@@ -1,10 +1,10 @@
 const path = require("path");
 const HTMLPlugin = require("html-webpack-plugin");
-const CopyPlugin = require("copy-webpack-plugin")
+const CopyPlugin = require("copy-webpack-plugin");
 
 module.exports = {
     entry: {
-        index: "./spawning-chrome-extension/src/index.tsx"
+        index: "./spawning-chrome-extension/src/index.tsx",
     },
     mode: "production",
     module: {
@@ -16,17 +16,15 @@ module.exports = {
                         loader: "ts-loader",
                         options: {
                             compilerOptions: { noEmit: false },
-                        }
-                    }],
+                        },
+                    },
+                ],
                 exclude: /node_modules/,
             },
             {
                 exclude: /node_modules/,
                 test: /\.css$/i,
-                use: [
-                    "style-loader",
-                    "css-loader"
-                ]
+                use: ["style-loader", "css-loader"],
             },
         ],
     },
@@ -34,6 +32,7 @@ module.exports = {
         new CopyPlugin({
             patterns: [
                 { from: "manifest.json", to: "../manifest.json" },
+                { from: "spawning-chrome-extension/src/assets", to: "../assets" },
             ],
         }),
         ...getHtmlPlugins(["index"]),

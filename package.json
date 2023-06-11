@@ -11,7 +11,7 @@
   },
   "scripts": {
     "build": "node-sass sass/App.scss -o spawning-chrome-extension/src --output-style compressed && webpack --config webpack.config.js",
-    "watch": "webpack -w --config webpack.config.js"
+    "watch": "node-sass sass/App.scss -o spawning-chrome-extension/src --output-style compressed && webpack -w --config webpack.config.js"
   },
   "dependencies": {
     "@types/react": "^18.2.11",
