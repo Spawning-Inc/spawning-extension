@@ -1,0 +1,12 @@
+.App {
+  color: white;
+  text-align: center;
+  background-color: green;
+}
+
+.container {
+  width: 15rem;
+  height: 15rem;
+  background-color: green;
+
+}
