@@ -80,6 +80,6 @@ document.querySelector('#go-to-options')?.addEventListener('click', function () 
     if (chrome.runtime.openOptionsPage) {
         chrome.runtime.openOptionsPage();
     } else {
-        window.open(chrome.runtime.getURL('../pages/options.html'));
+        window.open(chrome.runtime.getURL('../js/options.html'));
     }
 });

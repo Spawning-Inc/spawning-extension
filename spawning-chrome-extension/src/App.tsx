@@ -1,4 +1,10 @@
+import React from 'react';
+
 function App() {
+  const openOptionsPage = () => {
+    window.open('/js/options.html', '_blank');
+  };
+
   return (
     <div className="App">
       Hello World
@@ -14,12 +20,11 @@ function App() {
           <div id="code_total"></div>
           <div id="other_total"></div>
           <div id="status_message"></div>
-          <button id="go-to-options">Go to options</button>
+          <button id="go-to-options" onClick={openOptionsPage}>Go to options</button>
         </div>
         <script src="popup.js"></script>
       </body>
     </div>
-
   );
 }
 
