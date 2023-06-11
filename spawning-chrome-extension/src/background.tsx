@@ -1,5 +1,7 @@
 /// <reference types="chrome" />
 
+let background_urls: UrlsType;
+
 type UrlsType = {
     images: string[];
     audio: string[];
@@ -45,11 +47,11 @@ chrome.action.onClicked.addListener((tab) => {
 
 chrome.runtime.onMessage.addListener((request: { message: string, urls?: UrlsType }, sender: chrome.runtime.MessageSender, sendResponse: (response?: any) => void) => {
     if (request.message === 'page_links' && request.urls) {
-        urls = request.urls;
+        background_urls = request.urls;
         sendResponse({ status: 'received' });
         return true; // will respond asynchronously
     } else if (request.message === 'get_links') {
-        sendResponse({ urls: urls });
+        sendResponse({ urls: background_urls });
         return true; // will respond asynchronously
     }
 });

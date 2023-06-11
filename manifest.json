@@ -15,7 +15,7 @@
     },
     "action": {
         "default_popup": "js/index.html",
-        "default_title": "React Chrome Extension"
+        "default_title": "Spawning Chrome Extension"
     },
     "content_scripts": [
         {

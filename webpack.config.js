@@ -8,6 +8,7 @@ module.exports = {
         background: "./spawning-chrome-extension/src/background.tsx",
         content: "./spawning-chrome-extension/src/content.tsx",
         options: "./spawning-chrome-extension/src/options.tsx",
+        popup: "./spawning-chrome-extension/src/popup.tsx",
     },
     mode: "production",
     module: {

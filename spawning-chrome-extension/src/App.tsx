@@ -3,7 +3,23 @@ function App() {
     <div className="App">
       Hello World
       <img src="../assets/icon.svg" alt="icon" height={256} width={256} />
+      <body id="spawning-admin-panel">
+        <div className="content">
+          <h1>Report Card</h1>
+          <div id="domain_total"></div>
+          <div id="images_total"></div>
+          <div id="audio_total"></div>
+          <div id="video_total"></div>
+          <div id="text_total"></div>
+          <div id="code_total"></div>
+          <div id="other_total"></div>
+          <div id="status_message"></div>
+          <button id="go-to-options">Go to options</button>
+        </div>
+        <script src="popup.js"></script>
+      </body>
     </div>
+
   );
 }
 
