@@ -2,42 +2,49 @@
     "name": "Spawning",
     "description": "Search for images on hibt",
     "version": "1.0.0",
-    "manifest_version": 3,
+    "manifest_version": 2,
     "icons": {
-        "16": "assets/icons/icon16.png",
-        "32": "assets/icons/icon32.png",
-        "48": "assets/icons/icon48.png",
-        "128": "assets/icons/icon128.png"
+      "16": "assets/icons/icon16.png",
+      "32": "assets/icons/icon32.png",
+      "48": "assets/icons/icon48.png",
+      "128": "assets/icons/icon128.png"
     },
-    "permissions": ["contextMenus", "tabs", "activeTab", "scripting", "storage"],
+    "permissions": [
+      "contextMenus",
+      "tabs",
+      "activeTab",
+      "storage"
+    ],
     "content_scripts": [
-        {
-            "matches": ["<all_urls>"],
-            "js": [
-                "browser-polyfill.js",
-                "js/content.js"
-            ],
-            "run_at": "document_idle"
-        }
+      {
+        "matches": [
+          "<all_urls>"
+        ],
+        "js": [
+          "browser-polyfill.js",
+          "js/content.js"
+        ],
+        "run_at": "document_idle"
+      }
     ],
     "background": {
-        "scripts": [
-            "browser-polyfill.js",
-            "js/background.js"
-        ]
+      "scripts": [
+        "browser-polyfill.js",
+        "js/background.js"
+      ]
     },
-    "action": {
-        "default_popup": "js/index.html",
-        "default_title": "Spawning Chrome Extension"
+    "browser_action": {
+      "default_popup": "js/index.html",
+      "default_title": "Spawning Chrome Extension"
     },
     "options_ui": {
-        "page": "js/options.html",
-        "open_in_tab": true
+      "page": "js/options.html",
+      "open_in_tab": true
     },
     "browser_specific_settings": {
-        "gecko": {
-          "id": "spawning-chrome-extension@spawning.ai",
-          "strict_min_version": "57.0"
-        }
+      "gecko": {
+        "id": "spawning-chrome-extension@spawning.ai",
+        "strict_min_version": "57.0"
       }
-}
+    }
+  }

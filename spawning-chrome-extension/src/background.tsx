@@ -2,6 +2,8 @@
 
 let background_urls: UrlsType;
 
+let observer_disconnect: boolean = false;
+
 let onClickAction: typeof chrome.action | typeof chrome.browserAction | undefined;
 
 type UrlsType = {
@@ -44,43 +46,21 @@ if (typeof chrome.action !== 'undefined') {
     onClickAction = chrome.browserAction; // for Manifest V2
 }
 
-if (onClickAction) {
-    onClickAction.onClicked.addListener((tab) => {
-        if (tab.id) {
-            chrome.tabs.executeScript(tab.id, {
-                file: "content.js"
-            }, () => {
-                let checkIfLoaded = setInterval(() => {
-                    if (isContentScriptReady) {
-                        clearInterval(checkIfLoaded);
-                        // Now it's safe to send messages to content.js
-                    }
-                }, 100);
-            });
-        }
-    });
-}
-
-let isContentScriptReady = false;
-
-
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    if (request.message === 'content_ready') {
-        isContentScriptReady = true;
+    if (request.message === 'page_links' && request.urls) {
+        background_urls = request.urls;
+        sendResponse({ status: 'received' });
+        return true; // will respond asynchronously
+    } else if (request.message === 'ping') {
+        sendResponse({ message: 'background_active' });
+    } else if (request.message === 'get_links') {
+        sendResponse({ urls: background_urls });
+        return true; // will respond asynchronously
+    } else if (request.message === 'observer_disconnect') {
+        observer_disconnect = true;
+        return true; // will respond asynchronously
+    } else if (request.message === 'check_observer_disconnect') {
+        return observer_disconnect; // will respond asynchronously
     }
-    chrome.runtime.onMessage.addListener((request: { message: string, urls?: UrlsType }, sender: chrome.runtime.MessageSender, sendResponse: (response?: any) => void) => {
-        if (request.message === 'page_links' && request.urls) {
-            background_urls = request.urls;
-            sendResponse({ status: 'received' });
-            return true; // will respond asynchronously
-        } else if (request.message === 'get_links') {
-            sendResponse({ urls: background_urls });
-            return true; // will respond asynchronously
-        }
-    });
-});
-
-chrome.runtime.onStartup.addListener(() => {
-    // Send a message to the extension indicating that background.js is ready
-    chrome.runtime.sendMessage({ type: "background_ready" });
+    console.log(request);
 });

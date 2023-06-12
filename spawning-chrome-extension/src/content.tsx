@@ -1,25 +1,6 @@
 /// <reference types="chrome" />
 
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    if (request.message === 'start_scraping') {
 
-        urls = {
-            'images': [],
-            'audio': [],
-            'video': [],
-            'text': [],
-            'code': [],
-            'other': [],
-            'domains': []
-        };
-
-        scrapeUrls();
-        // Start observing for changes in the document when 'start_scraping' is received
-        observer.observe(document, { attributes: false, childList: true, subtree: true });
-
-        sendResponse({ success: true });
-    }
-});
 
 let urls: UrlsType = {
     images: [],
@@ -188,15 +169,28 @@ let observer = new MutationObserver((mutationsList) => {
     // Set a new timer
     timer = setTimeout(() => {
         observer.disconnect();
+        chrome.runtime.sendMessage({ message: 'observer_disconnect' });
         console.log('Mutation observer disconnected due to inactivity');
-    }, 10000);
+    }, 5000);
 });
 
-window.addEventListener("load", () => {
-    // Send a message to the extension indicating that content.js is ready
-    chrome.runtime.sendMessage({ type: "content_ready" });
-});
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    if (request.message === 'start_scraping') {
 
-document.addEventListener("DOMContentLoaded", function () {
-    chrome.runtime.sendMessage({ message: "content_ready" });
+        urls = {
+            images: [],
+            audio: [],
+            video: [],
+            text: [],
+            code: [],
+            other: [],
+            domains: [],
+        };
+
+        scrapeUrls();
+        // Start observing for changes in the document when 'start_scraping' is received
+        observer.observe(document, { attributes: false, childList: true, subtree: true });
+
+        sendResponse({ success: true });
+    }
 });
