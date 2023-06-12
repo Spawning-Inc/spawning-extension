@@ -1,6 +1,6 @@
 /// <reference types="chrome" />
 
-
+let observerMap = new Map();
 
 let urls: UrlsType = {
     images: [],
@@ -137,44 +137,11 @@ function scrapeUrls(): void {
 
 let timer: ReturnType<typeof setTimeout> | null = null;
 
-let observer = new MutationObserver((mutationsList) => {
-    // Clear the previous timer, if it exists
-    if (timer) {
-        clearTimeout(timer);
-    }
-
-    for (let mutation of mutationsList) {
-        if (mutation.type === 'childList') {
-            let nodes = Array.from(mutation.addedNodes);
-            for (let node of nodes) {
-                if (node.nodeType === Node.ELEMENT_NODE) {
-                    let htmlElement = node as HTMLElement;
-                    let elements = ['img', 'video', 'audio', 'a', 'link', 'script', 'source'];
-                    for (let elem of elements) {
-                        let foundElements = htmlElement.getElementsByTagName(elem);
-                        for (let foundElem of Array.from(foundElements)) {
-                            if ((foundElem as HTMLImageElement).src || (foundElem as HTMLAnchorElement).href || (foundElem as HTMLObjectElement).data) {
-                                classifyUrl((foundElem as HTMLImageElement).src || (foundElem as HTMLAnchorElement).href || (foundElem as HTMLObjectElement).data);
-                            }
-                        }
-                    }
-                    if ((htmlElement as HTMLImageElement).src || (htmlElement as HTMLAnchorElement).href || (htmlElement as HTMLObjectElement).data) {
-                        classifyUrl((htmlElement as HTMLImageElement).src || (htmlElement as HTMLAnchorElement).href || (htmlElement as HTMLObjectElement).data);
-                    }
-                }
-            }
-        }
-    }
-
-    // Set a new timer
-    timer = setTimeout(() => {
-        observer.disconnect();
-        chrome.runtime.sendMessage({ message: 'observer_disconnect' });
-        console.log('Mutation observer disconnected due to inactivity');
-    }, 5000);
-});
-
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    console.log('Received message for tabId:', request.tabId);
+
+    let tabId = sender.tab?.id || request.tabId;
+
     if (request.message === 'start_scraping') {
 
         urls = {
@@ -187,10 +154,50 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             domains: [],
         };
 
+        const observer = new MutationObserver((mutationsList) => {
+            // Clear the previous timer, if it exists
+            if (timer) {
+                clearTimeout(timer);
+            }
+
+            for (let mutation of mutationsList) {
+                if (mutation.type === 'childList') {
+                    let nodes = Array.from(mutation.addedNodes);
+                    for (let node of nodes) {
+                        if (node.nodeType === Node.ELEMENT_NODE) {
+                            let htmlElement = node as HTMLElement;
+                            let elements = ['img', 'video', 'audio', 'a', 'link', 'script', 'source'];
+                            for (let elem of elements) {
+                                let foundElements = htmlElement.getElementsByTagName(elem);
+                                for (let foundElem of Array.from(foundElements)) {
+                                    if ((foundElem as HTMLImageElement).src || (foundElem as HTMLAnchorElement).href || (foundElem as HTMLObjectElement).data) {
+                                        classifyUrl((foundElem as HTMLImageElement).src || (foundElem as HTMLAnchorElement).href || (foundElem as HTMLObjectElement).data);
+                                    }
+                                }
+                            }
+                            if ((htmlElement as HTMLImageElement).src || (htmlElement as HTMLAnchorElement).href || (htmlElement as HTMLObjectElement).data) {
+                                classifyUrl((htmlElement as HTMLImageElement).src || (htmlElement as HTMLAnchorElement).href || (htmlElement as HTMLObjectElement).data);
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Set a new timer
+            timer = setTimeout(() => {
+                observer.disconnect();
+                chrome.runtime.sendMessage({ message: 'observer_disconnect', tabId: tabId });
+                console.log('Observer disconnected for tabId:', request.tabId);
+                console.log('Mutation observer disconnected due to inactivity');
+            }, 2000);
+        });
+
+        observerMap.set(request.tabId, observer);
+
         scrapeUrls();
         // Start observing for changes in the document when 'start_scraping' is received
         observer.observe(document, { attributes: false, childList: true, subtree: true });
 
-        sendResponse({ success: true });
+        sendResponse({ success: true, tabId: request.tabId });
     }
 });

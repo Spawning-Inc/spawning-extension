@@ -16,6 +16,7 @@ function App() {
           <div id="code_total"></div>
           <div id="other_total"></div>
           <div id="status_message"></div>
+          <div id="download_button"></div>
         </div>
       </body>
     </div>

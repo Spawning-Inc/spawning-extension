@@ -1,8 +1,10 @@
 /// <reference types="chrome" />
 
-let background_urls: UrlsType;
+let tabData: Record<number, { observerState: boolean; urls: UrlsType }> = {};
 
-let observer_disconnect: boolean = false;
+let observerState = true; // Add this state
+
+let background_urls: UrlsType;
 
 let onClickAction: typeof chrome.action | typeof chrome.browserAction | undefined;
 
@@ -47,20 +49,67 @@ if (typeof chrome.action !== 'undefined') {
 }
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+
+    console.log('background.tsx: onMessage: request.message: ' + request);
+    if (request.message === 'ping') {
+        console.log('got ping dont worry');
+        sendResponse({ message: 'background_active' });
+        return true; // will respond asynchronously
+    }
+
+    let tabId = sender.tab?.id || request.tabId;
+    if (!tabId) {
+        tabId = request.tabId;
+        console.log('Error: tabId is undefined' + request.message);
+        return true;
+    }
+
+    // Initialize data for new tab
+    if (!tabData[tabId]) {
+        tabData[tabId] = {
+            observerState: true,
+            urls: {
+                images: [],
+                audio: [],
+                video: [],
+                text: [],
+                code: [],
+                other: [],
+                domains: [],
+            }
+        };
+    }
+
     if (request.message === 'page_links' && request.urls) {
-        background_urls = request.urls;
+        tabData[tabId].urls = request.urls;
         sendResponse({ status: 'received' });
         return true; // will respond asynchronously
-    } else if (request.message === 'ping') {
-        sendResponse({ message: 'background_active' });
     } else if (request.message === 'get_links') {
-        sendResponse({ urls: background_urls });
+        sendResponse({ urls: tabData[tabId].urls });
         return true; // will respond asynchronously
     } else if (request.message === 'observer_disconnect') {
-        observer_disconnect = true;
-        return true; // will respond asynchronously
-    } else if (request.message === 'check_observer_disconnect') {
-        return observer_disconnect; // will respond asynchronously
+        console.log('DIOSCONNECTED');
+        console.log('observer_disconnect ' + tabId);
+        tabData[tabId].observerState = false;
+        sendResponse({ status: 'observer_disconnected' });
+        if (request.tabId !== undefined) {
+            // Send the observer state tab ID to background.js
+            chrome.runtime.sendMessage({ message: 'observer_disconnect', tabId: request.tabId });
+        }
+    } else if (request.message === 'get_observer_state') {
+        if (request.tabId !== undefined) {
+            console.log('get observer state' + request.tabId + ' ' + tabData[request.tabId]?.observerState)
+            sendResponse({ observerState: tabData[request.tabId]?.observerState });
+        } else {
+            console.error('Error: tabId is undefined');
+        }
     }
     console.log(request);
+    sendResponse({ message: 'Unrecognized or unprocessable message' });
+    return true; // respond asynchronously
+});
+
+// Clean up when a tab is closed
+chrome.tabs.onRemoved.addListener((tabId) => {
+    delete tabData[tabId];
 });
