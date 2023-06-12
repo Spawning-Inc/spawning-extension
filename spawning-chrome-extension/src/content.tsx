@@ -195,8 +195,10 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         observerMap.set(request.tabId, observer);
 
         scrapeUrls();
+
         // Start observing for changes in the document when 'start_scraping' is received
         observer.observe(document, { attributes: false, childList: true, subtree: true });
+        console.log('Mutation observer started for tabId:', request.tabId);
 
         sendResponse({ success: true, tabId: request.tabId });
     }
