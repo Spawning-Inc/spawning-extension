@@ -21,7 +21,6 @@ function App() {
           <div id="status_message"></div>
           <button id="go-to-options" onClick={openOptionsPage}>Go to options</button>
         </div>
-        <script src="popup.js"></script>
       </body>
     </div>
   );
