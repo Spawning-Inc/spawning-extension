@@ -1,14 +1,13 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
-import App from './App';
+import '../../App.css'
 
-const MainComponent = () => {
-  const [scriptsActive, setScriptsActive] = React.useState(false);
-  const [scrapeActive, setScrapeActive] = React.useState(false);
-  const [observerActive, setObserverActive] = React.useState(true); // Add observerActive state
-  const fetchIntervalRef = React.useRef<NodeJS.Timeout | null>(null);
-
-  const retryCount = React.useRef(0);
+function App() {
+  const [scriptsActive, setScriptsActive] = useState(false);
+  const [scrapeActive, setScrapeActive] = useState(false);
+  const [observerActive, setObserverActive] = useState(true);
+  const fetchIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const retryCount = useRef(0);
 
   const getObserverState = () => {
     chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
@@ -239,20 +238,28 @@ const MainComponent = () => {
   }, []);
 
   return (
-    <div>
-      <button id="go-to-options" onClick={handleOptionsClick}>Go to Options</button>
-      <button id="start-scraping" onClick={handleScrapeClick}>Scrape</button>
-      <App />
+    <div className="App">
+      <link rel="stylesheet" href="App.css"></link>
+      <body id="spawning-admin-panel">
+        <div className="content">
+          <span><img src="../assets/icon.svg" alt="icon" height={128} width={128} /><h1>Report Card</h1></span>
+          <div id="domain_total"></div>
+          <div id="images_total"></div>
+          <div id="audio_total"></div>
+          <div id="video_total"></div>
+          <div id="text_total"></div>
+          <div id="code_total"></div>
+          <div id="other_total"></div>
+          <div id="status_message"></div>
+          <div id="download_button"></div>
+          <button id="go-to-options" onClick={handleOptionsClick}>Go to Options</button>
+          <button id="start-scraping" onClick={handleScrapeClick}>Scrape</button>
+        </div>
+      </body>
     </div>
   );
-};
+}
 
-const root = document.createElement('div');
-root.className = 'container';
-document.body.appendChild(root);
-ReactDOM.render(
-  <React.StrictMode>
-    <MainComponent />
-  </React.StrictMode>,
-  root
-);
+export default App;
+
+ReactDOM.render(<App />, document.getElementById('root'));

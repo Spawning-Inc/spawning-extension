@@ -154,10 +154,12 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             domains: [],
         };
 
+        let inactivityTimer: ReturnType<typeof setTimeout> | null = null;
+
         const observer = new MutationObserver((mutationsList) => {
             // Clear the previous timer, if it exists
-            if (timer) {
-                clearTimeout(timer);
+            if (inactivityTimer) {
+                clearTimeout(inactivityTimer);
             }
 
             for (let mutation of mutationsList) {
@@ -184,20 +186,42 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             }
 
             // Set a new timer
-            timer = setTimeout(() => {
+            inactivityTimer = setTimeout(() => {
                 observer.disconnect();
                 chrome.runtime.sendMessage({ message: 'observer_disconnect', tabId: tabId });
                 console.log('Observer disconnected for tabId:', request.tabId);
                 console.log('Mutation observer disconnected due to inactivity');
-            }, 2000);
+            }, 2000);  // Modify time as needed
         });
+
+        // Start observing for changes in the document when 'start_scraping' is received
+        const startObserver = () => {
+            observer.observe(document, { attributes: false, childList: true, subtree: true });
+            console.log('Mutation observer started for tabId:', request.tabId);
+        };
+
+        const observerTimeout = setTimeout(() => {
+            observer.disconnect();
+            chrome.runtime.sendMessage({ message: 'observer_disconnect', tabId: tabId });
+            console.log('Mutation observer failed to start for tabId:', request.tabId);
+        }, 2000);
+
+        if (document.readyState === 'complete') {
+            clearTimeout(observerTimeout);
+            startObserver();
+        } else {
+            window.addEventListener('load', () => {
+                clearTimeout(observerTimeout);
+                startObserver();
+            });
+        }
 
         observerMap.set(request.tabId, observer);
 
         scrapeUrls();
 
         // Start observing for changes in the document when 'start_scraping' is received
-        observer.observe(document, { attributes: false, childList: true, subtree: true });
+        // observer.observe(document, { attributes: false, childList: true, subtree: true });
         console.log('Mutation observer started for tabId:', request.tabId);
 
         sendResponse({ success: true, tabId: request.tabId });

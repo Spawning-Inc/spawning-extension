@@ -4,10 +4,10 @@ const CopyPlugin = require("copy-webpack-plugin");
 
 const commonConfig = {
     entry: {
-        index: "./spawning-chrome-extension/src/index.tsx",
-        background: "./spawning-chrome-extension/src/background.tsx",
-        content: "./spawning-chrome-extension/src/content.tsx",
-        options: "./spawning-chrome-extension/src/options.tsx",
+        index: "./spawning-chrome-extension/src/views/popup/App.tsx",
+        background: "./spawning-chrome-extension/src/background.ts",
+        content: "./spawning-chrome-extension/src/content.ts",
+        options: "./spawning-chrome-extension/src/views/options/App.tsx",
     },
     mode: "production",
     module: {
@@ -85,7 +85,7 @@ function getHtmlPlugins(chunks) {
             new HTMLPlugin({
                 title: "React extension",
                 filename: `${chunk}.html`,
-                template: path.resolve(__dirname, `./spawning-chrome-extension/src/${chunk}.html`),
+                template: path.resolve(__dirname, 'spawning-chrome-extension/src/template.html'),
                 chunks: [chunk],
             })
     );

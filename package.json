@@ -21,9 +21,11 @@
     "watch": "node-sass sass/App.scss -o spawning-chrome-extension/src --output-style compressed && webpack -w --config webpack.config.js"
   },
   "dependencies": {
+    "@aws-amplify/ui-react": "^5.0.0",
     "@types/chrome": "^0.0.237",
     "@types/react": "^18.2.11",
     "@types/react-dom": "^18.2.4",
+    "aws-amplify": "^5.2.5",
     "node-sass": "^9.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
