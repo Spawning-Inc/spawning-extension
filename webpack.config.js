@@ -49,7 +49,7 @@ module.exports = [
         plugins: [
             new CopyPlugin({
                 patterns: [
-                    { from: "manifest-chrome.json", to: "../manifest.json" },
+                    { from: "manifests/manifest-chrome.json", to: "../manifest.json" },
                     { from: "spawning-chrome-extension/src/assets", to: "../assets" },
                     { from: "spawning-chrome-extension/src/App.css", to: "../App.css" },
                     { from: "spawning-chrome-extension/src/App.css", to: "../js/App.css" },
@@ -67,7 +67,7 @@ module.exports = [
         plugins: [
             new CopyPlugin({
                 patterns: [
-                    { from: "manifest-firefox.json", to: "../manifest.json" },
+                    { from: "manifests/manifest-firefox.json", to: "../manifest.json" },
                     { from: "spawning-chrome-extension/src/assets", to: "../assets" },
                     { from: "spawning-chrome-extension/src/App.css", to: "../App.css" },
                     { from: "node_modules/webextension-polyfill/dist/browser-polyfill.js", to: "../" },
