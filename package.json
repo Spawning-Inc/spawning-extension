@@ -12,13 +12,17 @@
     "core-js": "^3.31.0",
     "css-loader": "^6.8.1",
     "html-webpack-plugin": "^5.5.3",
+    "jest": "^29.5.0",
+    "jest-environment-jsdom": "^29.5.0",
+    "ts-jest": "^29.1.0",
     "webextension-polyfill": "^0.10.0",
     "webpack": "^5.86.0",
     "webpack-cli": "^5.1.4"
   },
   "scripts": {
     "build": "node-sass sass/App.scss -o spawning-chrome-extension/src --output-style compressed && webpack --config webpack.config.js && mkdir -p build/chrome && mkdir -p build/firefox && cd dist/chrome && zip -r ../../build/chrome/chrome.zip . && cd ../firefox && web-ext build --overwrite-dest -a ../../build/firefox",
-    "watch": "node-sass sass/App.scss -o spawning-chrome-extension/src --output-style compressed && webpack -w --config webpack.config.js"
+    "watch": "node-sass sass/App.scss -o spawning-chrome-extension/src --output-style compressed && webpack -w --config webpack.config.js",
+    "test:unit": "jest --config=jest.config.js"
   },
   "dependencies": {
     "@aws-amplify/ui-react": "^5.0.0",
