@@ -17,7 +17,7 @@
     "webpack-cli": "^5.1.4"
   },
   "scripts": {
-    "build": "node-sass sass/App.scss -o spawning-chrome-extension/src --output-style compressed && webpack --config webpack.config.js",
+    "build": "node-sass sass/App.scss -o spawning-chrome-extension/src --output-style compressed && webpack --config webpack.config.js && mkdir -p build/chrome && mkdir -p build/firefox && cd dist/chrome && zip -r ../../build/chrome/chrome.zip . && cd ../firefox && web-ext build --overwrite-dest -a ../../build/firefox",
     "watch": "node-sass sass/App.scss -o spawning-chrome-extension/src --output-style compressed && webpack -w --config webpack.config.js"
   },
   "dependencies": {
