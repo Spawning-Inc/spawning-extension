@@ -110,18 +110,18 @@
         cursor: pointer;
         color: $action-color;
         font-size: 18px;
-      }
+    }
 
-      #spawning-admin-panel {
+    #spawning-admin-panel {
         display: grid;
         place-items: center;
         height: 100%;
-      }
-      
-      #main-content {
+    }
+
+    #main-content {
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-      }
+    }
 }
