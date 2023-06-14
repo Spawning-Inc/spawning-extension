@@ -38,7 +38,6 @@ function App() {
 
   return (
     <div id="spawning-admin-panel">
-      <h1>Wtaf</h1>
       <label>
         <input type="checkbox" id="images" checked={options.images} onChange={handleChange} />
         Images
