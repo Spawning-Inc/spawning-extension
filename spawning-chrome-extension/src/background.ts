@@ -28,6 +28,27 @@ chrome.runtime.onInstalled.addListener(() => {
     });
 });
 
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+    if (changeInfo.status === 'complete' && tab.active) {
+        if (!tabData[tabId]) {
+            tabData[tabId] = {
+                observerState: true,
+                urls: {
+                    images: [],
+                    audio: [],
+                    video: [],
+                    text: [],
+                    code: [],
+                    other: [],
+                    domains: [],
+                },
+            };
+        } else {
+            tabData[tabId].observerState = true;
+        }
+    }
+});
+
 // Add click event
 chrome.contextMenus.onClicked.addListener(onClickHandler);
 

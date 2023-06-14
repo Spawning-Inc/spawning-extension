@@ -98,15 +98,30 @@
 
     .content {
         width: 500px;
-        height: 500px;
+        height: 247px;
     }
-}
 
-.footer-links p {
-    float: right;
-}
+    #go-to-options {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background-color: transparent;
+        border: none;
+        cursor: pointer;
+        color: $action-color;
+        font-size: 18px;
+      }
 
-.link-row,
-.row-item {
-    display: flex;
+      #spawning-admin-panel {
+        display: grid;
+        place-items: center;
+        height: 100%;
+      }
+      
+      #main-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
 }

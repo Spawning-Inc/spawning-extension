@@ -1,11 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 import axios from 'axios';
+import { BsFillInfoCircleFill, BsFillFileTextFill } from "react-icons/bs"; // import info icon
 import '../../App.css'
 
 function App() {
   const [scriptsActive, setScriptsActive] = useState(false);
   const [scrapeActive, setScrapeActive] = useState(false);
+  const [scrapingStarted, setScrapingStarted] = useState(false);
+  const [searchComplete, setSearchComplete] = useState(false);
   const [observerActive, setObserverActive] = useState(true);
   const fetchIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const retryCount = useRef(0);
@@ -29,7 +32,7 @@ function App() {
             return;
           }
           if (response) {
-            console.log("state:" + response.observerState)
+            console.log("Current observer state:" + response.observerState)
             setObserverActive(response.observerState);
           }
         });
@@ -41,9 +44,10 @@ function App() {
     const statusMessage = document.getElementById('status_message');
     if (statusMessage) {
       if (observerActive) {
-        statusMessage.textContent = 'Processing';
+        statusMessage.textContent = '';
       } else {
         statusMessage.textContent = 'Done';
+        setSearchComplete(true);
         const downloadButton = document.getElementById('download_button');
         if (downloadButton) {
           getLinks().then((links) => {
@@ -75,6 +79,7 @@ function App() {
   };
 
   const handleScrapeClick = () => {
+    setScrapingStarted(true);
     return new Promise((resolve, reject) => {
       chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
         if (tabs[0] && tabs[0].id) {
@@ -113,7 +118,9 @@ function App() {
 
       // Create the link using the received id
       a.href = `https://haveibeentrained.com?materialize_id=${id}`;
-      a.textContent = 'Download URLs';
+      a.target = '_blank';
+      ReactDOM.render(<BsFillFileTextFill />, a);
+
     } catch (error) {
       console.error('API request failed:', error);
       // handle the error appropriately
@@ -140,7 +147,6 @@ function App() {
             return;
           }
 
-          const statusMessage = document.getElementById('status_message');
           const domainTotal = document.getElementById('domain_total');
           const imagesTotal = document.getElementById('images_total');
           const audioTotal = document.getElementById('audio_total');
@@ -171,9 +177,6 @@ function App() {
           }
           if (otherTotal) {
             otherTotal.textContent = `Other: ${other ? other.length : 0}`;
-          }
-          if (statusMessage) {
-            statusMessage.textContent = 'Processing';
           }
         });
       } else {
@@ -269,24 +272,32 @@ function App() {
 
   return (
     <div className="App">
-      <link rel="stylesheet" href="App.css"></link>
-      <body id="spawning-admin-panel">
-        <div className="content">
-          <span><img src="../assets/icon.svg" alt="icon" height={128} width={128} /><h1>Report Card</h1></span>
-          <div id="domain_total"></div>
-          <div id="images_total"></div>
-          <div id="audio_total"></div>
-          <div id="video_total"></div>
-          <div id="text_total"></div>
-          <div id="code_total"></div>
-          <div id="other_total"></div>
-          <div id="status_message"></div>
-          <div id="download_button"></div>
-          <button id="go-to-options" onClick={handleOptionsClick}>Go to Options</button>
-          <button id="start-scraping" onClick={handleScrapeClick}>Scrape</button>
+    <link rel="stylesheet" href="App.css"></link>
+    <body id="spawning-admin-panel">
+      <div className="content">
+        <img src="../assets/header.svg" alt="icon" width={250}/>
+        <div id="main-content">
+        {!scrapingStarted && (
+            <button id="start-sccraping" className='buttonSecondary' onClick={handleScrapeClick}>Inspect</button>
+        )}
+        {scrapingStarted && !searchComplete && (
+          <img id="searching" src="../assets/searching.gif" alt="Searching icon" height={100} />
+        )}
         </div>
-      </body>
-    </div>
+        <div id="domain_total"></div>
+        <div id="images_total"></div>
+        <div id="audio_total"></div>
+        <div id="video_total"></div>
+        <div id="text_total"></div>
+        <div id="code_total"></div>
+        <div id="other_total"></div>
+        <div id="status_message"></div>
+        {/* Make sure to give this div an appropriate style to hold the link */}
+        <div id="download_button"></div>
+        <button id="go-to-options" onClick={handleOptionsClick}><BsFillInfoCircleFill /></button>
+      </div>
+    </body>
+  </div>
   );
 }
 
