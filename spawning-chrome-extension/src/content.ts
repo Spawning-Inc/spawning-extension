@@ -157,7 +157,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         let inactivityTimer: ReturnType<typeof setTimeout> | null = null;
 
         const observer = new MutationObserver((mutationsList) => {
-            // Clear the previous timer, if it exists
             if (inactivityTimer) {
                 clearTimeout(inactivityTimer);
             }
@@ -185,7 +184,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
                 }
             }
 
-            // Set a new timer
             inactivityTimer = setTimeout(() => {
                 observer.disconnect();
                 chrome.runtime.sendMessage({ message: 'observer_disconnect', tabId: tabId });
@@ -194,35 +192,33 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             }, 2000);  // Modify time as needed
         });
 
-        // Start observing for changes in the document when 'start_scraping' is received
         const startObserver = () => {
             observer.observe(document, { attributes: false, childList: true, subtree: true });
             console.log('Mutation observer started for tabId:', request.tabId);
         };
 
-        const observerTimeout = setTimeout(() => {
-            observer.disconnect();
-            chrome.runtime.sendMessage({ message: 'observer_disconnect', tabId: tabId });
-            console.log('Mutation observer failed to start for tabId:', request.tabId);
-        }, 2000);
+        // Start observer
+        startObserver();
 
-        if (document.readyState === 'complete') {
-            clearTimeout(observerTimeout);
-            startObserver();
-        } else {
-            window.addEventListener('load', () => {
-                clearTimeout(observerTimeout);
-                startObserver();
-            });
-        }
+        // Initialize previousUrlsCount
+        let previousUrlsCount = 0;
 
-        observerMap.set(request.tabId, observer);
+        // Check every 2 seconds if new URLs are found
+        const urlCheckInterval = setInterval(() => {
+            const currentUrlsCount = Object.values(urls).reduce((acc, curr) => acc + curr.length, 0);
+
+            if (currentUrlsCount === previousUrlsCount) {
+                // No new URLs were found, disconnect observer
+                observer.disconnect();
+                chrome.runtime.sendMessage({ message: 'observer_disconnect', tabId: tabId });
+                console.log('Observer disconnected for tabId:', request.tabId);
+                clearInterval(urlCheckInterval);
+            }
+
+            previousUrlsCount = currentUrlsCount;
+        }, 4000);
 
         scrapeUrls();
-
-        // Start observing for changes in the document when 'start_scraping' is received
-        // observer.observe(document, { attributes: false, childList: true, subtree: true });
-        console.log('Mutation observer started for tabId:', request.tabId);
 
         sendResponse({ success: true, tabId: request.tabId });
     }

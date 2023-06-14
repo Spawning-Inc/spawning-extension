@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
-import '../App.css'
+import axios from 'axios';
+import '../../App.css'
 
 function App() {
   const [scriptsActive, setScriptsActive] = useState(false);
@@ -8,6 +9,16 @@ function App() {
   const [observerActive, setObserverActive] = useState(true);
   const fetchIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const retryCount = useRef(0);
+
+  interface Links {
+    images: string[];
+    audio: string[];
+    video: string[];
+    text: string[];
+    code: string[];
+    other: string[];
+    domains: string[];
+  };
 
   const getObserverState = () => {
     chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
@@ -36,8 +47,9 @@ function App() {
         const downloadButton = document.getElementById('download_button');
         if (downloadButton) {
           getLinks().then((links) => {
-            const link = createLink(links);
-            downloadButton.appendChild(link);
+            createLink((links as { images: string[] })["images"]).then((link) => {
+              downloadButton.appendChild(link);
+            });
           }).catch((error) => {
             console.error('Failed to get links:', error);
           });
@@ -82,13 +94,31 @@ function App() {
     });
   };
 
-  const createLink = (urls: any) => {
+  const createLink = async (urls: string[]) => {
+    // Create a new anchor element
     const a = document.createElement('a');
-    a.download = 'urls.json';
-    a.textContent = 'Download URLs';
-    const data = new Blob([JSON.stringify(urls)], { type: 'application/json' });
-    const url = window.URL.createObjectURL(data);
-    a.href = url;
+
+    // Send a POST request to the API
+    try {
+      const response = await axios.post('https://hibt-passthrough.spawningaiapi.com/api/v1/materialize/urls/', {
+        urls,
+      }, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      // Extract the id from the response
+      const { id } = response.data;
+
+      // Create the link using the received id
+      a.href = `https://haveibeentrained.com?materialize_id=${id}`;
+      a.textContent = 'Download URLs';
+    } catch (error) {
+      console.error('API request failed:', error);
+      // handle the error appropriately
+    }
+
     return a;
   };
 

@@ -1,7 +1,10 @@
 import React from 'react';
-import * as ReactDOM from 'react-dom';
-import { render, fireEvent } from '@testing-library/react';
+import ReactDOM from 'react-dom';
+import { render, fireEvent, cleanup } from '@testing-library/react';
+import '@testing-library/jest-dom';
 import App from './App';
+
+afterEach(cleanup);
 
 it('renders without crashing', () => {
   const div = document.createElement('div');
@@ -9,23 +12,18 @@ it('renders without crashing', () => {
   ReactDOM.unmountComponentAtNode(div);
 });
 
-it('renders options correctly', () => {
-  const { getByLabelText } = render(<App />);
+describe('Options checkboxes', () => {
+  const optionsIds = ['images', 'audio', 'video', 'text', 'code'];
 
-  expect((getByLabelText(/images/i) as HTMLInputElement).checked).toEqual(true);
-  expect((getByLabelText(/audio/i) as HTMLInputElement).checked).toEqual(true);
-  expect((getByLabelText(/video/i) as HTMLInputElement).checked).toEqual(true);
-  expect((getByLabelText(/text/i) as HTMLInputElement).checked).toEqual(true);
-  expect((getByLabelText(/code/i) as HTMLInputElement).checked).toEqual(true);
-});
+  optionsIds.forEach(id => {
+    test(`Checkbox with id '${id}' toggles on click`, async () => {
+      const { getByLabelText } = render(<App />);
 
-it('checks and unchecks an option', () => {
-  const { getByLabelText } = render(<App />);
+      const checkbox = getByLabelText(new RegExp(id, 'i')) as HTMLInputElement;
+      const initialCheckedStatus = checkbox.checked;
 
-  const imagesInput = getByLabelText(/images/i) as HTMLInputElement;
-  fireEvent.click(imagesInput);
-  expect(imagesInput.checked).toEqual(false);
-
-  fireEvent.click(imagesInput);
-  expect(imagesInput.checked).toEqual(true);
+      fireEvent.click(checkbox);
+      expect(checkbox.checked).toEqual(!initialCheckedStatus);
+    });
+  });
 });

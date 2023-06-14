@@ -7,6 +7,7 @@
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^14.0.0",
     "@types/jest": "^29.5.2",
+    "@types/uuid": "^9.0.2",
     "babel-loader": "^9.1.2",
     "copy-webpack-plugin": "^11.0.0",
     "core-js": "^3.31.0",
@@ -20,8 +21,8 @@
     "webpack-cli": "^5.1.4"
   },
   "scripts": {
-    "build": "node-sass sass/App.scss -o spawning-chrome-extension/src --output-style compressed && webpack --config webpack.config.js && mkdir -p build/chrome && mkdir -p build/firefox && cd dist/chrome && zip -r ../../build/chrome/chrome.zip . && cd ../firefox && web-ext build --overwrite-dest -a ../../build/firefox",
-    "watch": "node-sass sass/App.scss -o spawning-chrome-extension/src --output-style compressed && webpack -w --config webpack.config.js",
+    "build": "sass sass/App.scss:spawning-chrome-extension/src/App.css --style=compressed && webpack --config webpack.config.js && mkdir -p build/chrome && mkdir -p build/firefox && cd dist/chrome && zip -r ../../build/chrome/chrome.zip . && cd ../firefox && web-ext build --overwrite-dest -a ../../build/firefox",
+    "watch": "sass sass/App.scss:spawning-chrome-extension/src/App.css --style=compressed && webpack -w --config webpack.config.js",
     "test:unit": "jest --config=jest.config.js"
   },
   "dependencies": {
@@ -30,12 +31,14 @@
     "@types/react": "^18.2.11",
     "@types/react-dom": "^18.2.4",
     "aws-amplify": "^5.2.5",
-    "node-sass": "^9.0.0",
+    "axios": "^1.4.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "sass": "^1.63.3",
     "style-loader": "^3.3.3",
     "ts-loader": "^9.4.3",
     "typescript": "^5.1.3",
+    "uuid": "^9.0.0",
     "webextension-polyfill-ts": "^0.26.0"
   }
 }
