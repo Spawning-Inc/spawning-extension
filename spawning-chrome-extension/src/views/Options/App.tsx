@@ -1,9 +1,34 @@
 import React, { useState, useEffect } from 'react'
 import ReactDOM from 'react-dom';
+import Record from "../components/Record"
 import '../../App.css'
 
 type OptionsType = { images: boolean; audio: boolean; video: boolean; text: boolean; code: boolean; }
-type Links = { images: string[]; audio: string[]; video: string[]; text: string[]; code: string[]; }
+
+type Links = {
+  images: string[];
+  audio: string[];
+  video: string[];
+  text: string[];
+  code: string[];
+  other: string[];
+  domains: string[];
+};
+
+type RecordProps = {
+  record: {
+    id?: string,
+    url?: string,
+    timestamp?: string,
+    domains: number,
+    images: number,
+    audio: number,
+    video: number,
+    text: number,
+    code: number,
+    other: number,
+  },
+};
 
 function App() {
   const [options, setOptions] = useState({ images: true, audio: true, video: true, text: true, code: true });
@@ -17,18 +42,37 @@ function App() {
         setOptions(items as OptionsType);
       }
     );
-
-     // Fetch URL records
-     chrome.storage.local.get(null, function(items) {
-      const urlRecords = Object.entries(items).reduce((acc, [key, value]) => {
-        if (key.startsWith('urlRecord_')) {
-          acc[key.slice(10)] = value as { links: Links; timestamp: string; currentUrl: string; };
-        }
-        return acc;
-      }, {} as Record<string, { links: Links; timestamp: string; currentUrl: string; }>);
-      
-      setUrlRecords(urlRecords);
-    });
+  
+    // Function to fetch URL records
+    const fetchUrlRecords = () => {
+      chrome.storage.local.get(null, function(items) {
+        const urlRecords = Object.entries(items).reduce((acc, [key, value]) => {
+          if (key.startsWith('urlRecord_')) {
+            acc[key.slice(10)] = value as { links: Links; timestamp: string; currentUrl: string; };
+          }
+          return acc;
+        }, {} as Record<string, { links: Links; timestamp: string; currentUrl: string; }>);
+        
+        setUrlRecords(urlRecords);
+      });
+    };
+  
+    // Initial fetch
+    fetchUrlRecords();
+  
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        // Tab has gained focus, refresh data
+        fetchUrlRecords();
+      }
+    };
+  
+    // Add event listener
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+  
+    // Cleanup function
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  
   }, []);
 
   const saveOptions = () => {
@@ -78,27 +122,27 @@ function App() {
       </label>
       <div id="status">{status}</div>
       <button id="save" onClick={saveOptions}>Save</button>
-      <div id="urlRecords">
-        <h2>URL Records</h2>
-        {Object.entries(urlRecords).map(([id, record]) => (
+      <div id="urlRecords" className="record-container">
+      {Object.entries(urlRecords).map(([id, record]) => {
+        const recordProps: RecordProps["record"] = ['domains', 'images', 'audio', 'video', 'text', 'code', 'other'].reduce((result, type) => {
+          result[type as keyof Links] = record.links[type as keyof Links]?.length || 0;
+          return result;
+        }, {} as Record<keyof Links, number>);
+
+        recordProps.id = id;
+        recordProps.url = record.currentUrl;
+        recordProps.timestamp = record.timestamp;
+
+        return (
           <div key={id}>
-            <h3>ID: {id}</h3>
-            <p>Timestamp: {record.timestamp}</p>
-            <p>Current URL: {record.currentUrl}</p>
-            {Object.entries(record.links).map(([type, urls]) => (
-              <div key={type}>
-                <h4>{type}</h4>
-                {urls.map(url => <p key={url}>{url}</p>)}
-              </div>
-            ))}
+            <Record record={recordProps} />
           </div>
-        ))}
-      </div>
+        )
+      })}
     </div>
-  );
-}
+  </div>
+  )};
 
 export default App;
 
 ReactDOM.render(<App />, document.getElementById('root'));
-

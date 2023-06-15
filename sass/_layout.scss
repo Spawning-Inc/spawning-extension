@@ -97,8 +97,8 @@
     }
 
     .content {
-        width: 500px;
-        height: 247px;
+        width: 350px;
+        height: 217px;
     }
 
     #go-to-options {
@@ -124,4 +124,67 @@
         align-items: center;
         justify-content: center;
     }
+
+    .record-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+
+    .record-card {
+        width: 250px;
+        height: 250px;
+        margin: 10px;
+        padding: 20px;
+        box-sizing: border-box;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .report-link {
+        position: absolute;
+        padding-left: 180px;
+        padding-top: 180px;
+        font-size: 28px;
+        color: #6f80ff;
+      }
+      
+      /* Media query for responsiveness */
+      @media (max-width: 768px) {
+        .record-card {
+          width: 100%;
+        }
+      }
+      
+      /* Your specific styles here */
+      
+      #status_message {
+        width: 100%;
+        text-align: right;
+      }
+
+      #searching {
+        position: fixed;
+        bottom: 8px;
+        right: 8px;
+      }
+
+      .record-card {
+        font-size: 16px;
+        display: flex;
+      }
+      
+      .record-card img {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        margin-right: 8px;
+      }
+      
+      .record-card a {
+        display: inline-flex;
+        align-items: center;
+      }
 }

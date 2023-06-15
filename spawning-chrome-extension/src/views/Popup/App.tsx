@@ -2,6 +2,9 @@ import React, { useEffect, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 import axios from 'axios';
 import { BsFillInfoCircleFill, BsFillFileTextFill } from "react-icons/bs"; // import info icon
+import Record from "../components/Record"
+import StatusMessage from '../components/StatusMessage';
+
 import '../../App.css'
 
 function App() {
@@ -10,6 +13,7 @@ function App() {
   const [scrapingStarted, setScrapingStarted] = useState(false);
   const [searchComplete, setSearchComplete] = useState(false);
   const [observerActive, setObserverActive] = useState(true);
+  const [status, setStatus] = useState<string>('');
   const fetchIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const retryCount = useRef(0);
 
@@ -22,6 +26,30 @@ function App() {
     other: string[];
     domains: string[];
   };
+
+  const [record, setRecord] = useState<{
+    id: any; 
+    url: string | undefined; 
+    timestamp: string | undefined; 
+    domains: number; 
+    images: number; 
+    audio: number; 
+    video: number; 
+    text: number; 
+    code: number; 
+    other: number;
+  }>({
+    id: undefined,
+    url: undefined,
+    timestamp: undefined,
+    domains: 0,
+    images: 0,
+    audio: 0,
+    video: 0,
+    text: 0,
+    code: 0,
+    other: 0,
+  });
 
   const getObserverState = () => {
     chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
@@ -41,28 +69,20 @@ function App() {
   };
 
   useEffect(() => {
-    const statusMessage = document.getElementById('status_message');
-    if (statusMessage) {
-      if (observerActive) {
-        statusMessage.textContent = '';
-      } else {
-        statusMessage.textContent = 'Done';
+      if (!observerActive) {
+        setStatus('Complete');
         setSearchComplete(true);
-        const downloadButton = document.getElementById('download_button');
-        if (downloadButton) {
-          getLinks().then((links) => {
-            // TODO: what can we pass in?
-            // createLink(links).then((link) => { // pass the whole object
-            //     downloadButton.appendChild(link);
-            // });
-            createLink(links as Links).then((link) => {
-              downloadButton.appendChild(link);
-            });
-          }).catch((error) => {
-            console.error('Failed to get links:', error);
+        getLinks().then((links) => {
+          // TODO: what can we pass in?
+          // createLink(links).then((link) => { // pass the whole object
+          //     downloadButton.appendChild(link);
+          // });
+          createLink(links as Links).then((link) => {
+            // downloadButton.appendChild(link);
           });
-        }
-      }
+        }).catch((error) => {
+          console.error('Failed to get links:', error);
+        });
     }
   }, [observerActive]);
 
@@ -80,6 +100,10 @@ function App() {
     } else {
       window.open(chrome.runtime.getURL('../js/options.html'));
     }
+  };
+
+  const handleClick = () => {
+    console.log('Button clicked');
   };
 
   const handleScrapeClick = () => {
@@ -127,7 +151,7 @@ function App() {
       ReactDOM.render(<BsFillFileTextFill />, a);
 
       // Get the current timestamp
-      const timestamp = new Date().toISOString();
+      const timestamp = new Date().toLocaleString();
 
       // Get the current tab's URL
       chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
@@ -143,6 +167,14 @@ function App() {
         }, function () {
           console.log(`Urls are saved with id ${id}`);
         });
+
+        // Set record id, url, and timestamp
+        setRecord(prevRecord => ({
+          ...prevRecord,
+          id: id || undefined, // Assign undefined if id is null
+          url: currentUrl || undefined, // Assign undefined if currentUrl is null
+          timestamp: timestamp || undefined, // Assign undefined if readableTimestamp is null
+        }));
       });
 
     } catch (error) {
@@ -152,6 +184,7 @@ function App() {
 
     return a;
   };
+
 
   const fetchAndDisplayUrls = () => {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
@@ -171,37 +204,19 @@ function App() {
             return;
           }
 
-          const domainTotal = document.getElementById('domain_total');
-          const imagesTotal = document.getElementById('images_total');
-          const audioTotal = document.getElementById('audio_total');
-          const videoTotal = document.getElementById('video_total');
-          const textTotal = document.getElementById('text_total');
-          const codeTotal = document.getElementById('code_total');
-          const otherTotal = document.getElementById('other_total');
 
           const { domains, images, audio, video, text, code, other } = response.urls;
 
-          if (domainTotal) {
-            domainTotal.textContent = `Total unique domains: ${domains ? domains.length : 0}`;
-          }
-          if (imagesTotal) {
-            imagesTotal.innerHTML = `<img src="../assets/images.svg" alt="Images icon"> Images: ${images ? images.length : 0}`;
-          }
-          if (audioTotal) {
-            audioTotal.innerHTML = `<img src="../assets/audio.svg" alt="Audio icon"> Audio: ${audio ? audio.length : 0}`;
-          }
-          if (videoTotal) {
-            videoTotal.innerHTML = `<img src="../assets/video.svg" alt="Video icon"> Video: ${video ? video.length : 0}`;
-          }
-          if (textTotal) {
-            textTotal.innerHTML = `<img src="../assets/text.svg" alt="Text icon"> Text: ${text ? text.length : 0}`;
-          }
-          if (codeTotal) {
-            codeTotal.innerHTML = `<img src="../assets/code.svg" alt="Code icon"> Code: ${code ? code.length : 0}`;
-          }
-          if (otherTotal) {
-            otherTotal.textContent = `Other: ${other ? other.length : 0}`;
-          }
+          setRecord(prevRecord => ({
+            ...prevRecord,
+            domains: domains ? domains.length : 0,
+            images: images ? images.length : 0,
+            audio: audio ? audio.length : 0,
+            video: video ? video.length : 0,
+            text: text ? text.length : 0,
+            code: code ? code.length : 0,
+            other: other ? other.length : 0,
+          }));
         });
       } else {
         console.error('No active tab found');
@@ -301,23 +316,15 @@ function App() {
         <div className="content">
           <img src="../assets/header.svg" alt="icon" width={250} />
           <div id="main-content">
-            {!scrapingStarted && (
-              <button id="start-sccraping" className='buttonSecondary' onClick={handleScrapeClick}>Inspect</button>
-            )}
+          {!scrapingStarted && scriptsActive && (
+            <button id="start-scraping" className='buttonSecondary' onClick={handleScrapeClick}>Inspect</button>
+          )}
             {scrapingStarted && !searchComplete && (
               <img id="searching" src="../assets/searching.gif" alt="Searching icon" height={100} />
             )}
           </div>
-          <div id="domain_total"></div>
-          <div id="images_total"></div>
-          <div id="audio_total"></div>
-          <div id="video_total"></div>
-          <div id="text_total"></div>
-          <div id="code_total"></div>
-          <div id="other_total"></div>
-          <div id="status_message"></div>
-          {/* Make sure to give this div an appropriate style to hold the link */}
-          <div id="download_button"></div>
+          <Record record={record} />
+          <StatusMessage status={status} />
           <button id="go-to-options" onClick={handleOptionsClick}><BsFillInfoCircleFill /></button>
         </div>
       </body>
