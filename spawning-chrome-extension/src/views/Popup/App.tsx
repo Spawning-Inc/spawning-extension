@@ -51,7 +51,11 @@ function App() {
         const downloadButton = document.getElementById('download_button');
         if (downloadButton) {
           getLinks().then((links) => {
-            createLink((links as { images: string[] })["images"]).then((link) => {
+            // TODO: what can we pass in?
+            // createLink(links).then((link) => { // pass the whole object
+            //     downloadButton.appendChild(link);
+            // });
+            createLink(links as Links).then((link) => {
               downloadButton.appendChild(link);
             });
           }).catch((error) => {
@@ -99,10 +103,11 @@ function App() {
     });
   };
 
-  const createLink = async (urls: string[]) => {
+  const createLink = async (links: Links) => {
     // Create a new anchor element
     const a = document.createElement('a');
 
+    const urls = (links as { images: string[] })["images"];
     // Send a POST request to the API
     try {
       const response = await axios.post('https://hibt-passthrough.spawningaiapi.com/api/v1/materialize/urls/', {
@@ -120,6 +125,25 @@ function App() {
       a.href = `https://haveibeentrained.com?materialize_id=${id}`;
       a.target = '_blank';
       ReactDOM.render(<BsFillFileTextFill />, a);
+
+      // Get the current timestamp
+      const timestamp = new Date().toISOString();
+
+      // Get the current tab's URL
+      chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+        const currentUrl = tabs[0]?.url || 'N/A';
+
+        // Save the data to chrome storage
+        chrome.storage.local.set({
+          [`urlRecord_${id}`]: {
+            links,
+            timestamp,
+            currentUrl,
+          }
+        }, function () {
+          console.log(`Urls are saved with id ${id}`);
+        });
+      });
 
     } catch (error) {
       console.error('API request failed:', error);
@@ -272,32 +296,32 @@ function App() {
 
   return (
     <div className="App">
-    <link rel="stylesheet" href="App.css"></link>
-    <body id="spawning-admin-panel">
-      <div className="content">
-        <img src="../assets/header.svg" alt="icon" width={250}/>
-        <div id="main-content">
-        {!scrapingStarted && (
-            <button id="start-sccraping" className='buttonSecondary' onClick={handleScrapeClick}>Inspect</button>
-        )}
-        {scrapingStarted && !searchComplete && (
-          <img id="searching" src="../assets/searching.gif" alt="Searching icon" height={100} />
-        )}
+      <link rel="stylesheet" href="App.css"></link>
+      <body id="spawning-admin-panel">
+        <div className="content">
+          <img src="../assets/header.svg" alt="icon" width={250} />
+          <div id="main-content">
+            {!scrapingStarted && (
+              <button id="start-sccraping" className='buttonSecondary' onClick={handleScrapeClick}>Inspect</button>
+            )}
+            {scrapingStarted && !searchComplete && (
+              <img id="searching" src="../assets/searching.gif" alt="Searching icon" height={100} />
+            )}
+          </div>
+          <div id="domain_total"></div>
+          <div id="images_total"></div>
+          <div id="audio_total"></div>
+          <div id="video_total"></div>
+          <div id="text_total"></div>
+          <div id="code_total"></div>
+          <div id="other_total"></div>
+          <div id="status_message"></div>
+          {/* Make sure to give this div an appropriate style to hold the link */}
+          <div id="download_button"></div>
+          <button id="go-to-options" onClick={handleOptionsClick}><BsFillInfoCircleFill /></button>
         </div>
-        <div id="domain_total"></div>
-        <div id="images_total"></div>
-        <div id="audio_total"></div>
-        <div id="video_total"></div>
-        <div id="text_total"></div>
-        <div id="code_total"></div>
-        <div id="other_total"></div>
-        <div id="status_message"></div>
-        {/* Make sure to give this div an appropriate style to hold the link */}
-        <div id="download_button"></div>
-        <button id="go-to-options" onClick={handleOptionsClick}><BsFillInfoCircleFill /></button>
-      </div>
-    </body>
-  </div>
+      </body>
+    </div>
   );
 }
 

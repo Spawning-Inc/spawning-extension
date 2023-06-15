@@ -3,9 +3,11 @@ import ReactDOM from 'react-dom';
 import '../../App.css'
 
 type OptionsType = { images: boolean; audio: boolean; video: boolean; text: boolean; code: boolean; }
+type Links = { images: string[]; audio: string[]; video: string[]; text: string[]; code: string[]; }
 
 function App() {
   const [options, setOptions] = useState({ images: true, audio: true, video: true, text: true, code: true });
+  const [urlRecords, setUrlRecords] = useState<Record<string, { links: Links; timestamp: string; currentUrl: string; }>>({});
   const [status, setStatus] = useState("");
 
   useEffect(() => {
@@ -15,6 +17,18 @@ function App() {
         setOptions(items as OptionsType);
       }
     );
+
+     // Fetch URL records
+     chrome.storage.local.get(null, function(items) {
+      const urlRecords = Object.entries(items).reduce((acc, [key, value]) => {
+        if (key.startsWith('urlRecord_')) {
+          acc[key.slice(10)] = value as { links: Links; timestamp: string; currentUrl: string; };
+        }
+        return acc;
+      }, {} as Record<string, { links: Links; timestamp: string; currentUrl: string; }>);
+      
+      setUrlRecords(urlRecords);
+    });
   }, []);
 
   const saveOptions = () => {
@@ -64,6 +78,22 @@ function App() {
       </label>
       <div id="status">{status}</div>
       <button id="save" onClick={saveOptions}>Save</button>
+      <div id="urlRecords">
+        <h2>URL Records</h2>
+        {Object.entries(urlRecords).map(([id, record]) => (
+          <div key={id}>
+            <h3>ID: {id}</h3>
+            <p>Timestamp: {record.timestamp}</p>
+            <p>Current URL: {record.currentUrl}</p>
+            {Object.entries(record.links).map(([type, urls]) => (
+              <div key={type}>
+                <h4>{type}</h4>
+                {urls.map(url => <p key={url}>{url}</p>)}
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

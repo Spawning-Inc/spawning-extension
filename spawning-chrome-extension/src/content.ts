@@ -216,7 +216,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             }
 
             previousUrlsCount = currentUrlsCount;
-        }, 4000);
+        }, 1500);
 
         scrapeUrls();
 
