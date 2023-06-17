@@ -1,6 +1,8 @@
+// Import necessary modules and components
 import React, { useEffect, useState } from 'react';
 import { BsImages, BsFileMusic, BsFillCameraVideoFill, BsFillFileEarmarkTextFill, BsCodeSquare, BsCloud, BsHash, BsFillFileEarmarkBarGraphFill } from 'react-icons/bs';
 
+// Define the type for RecordProps
 type RecordProps = {
   record: {
     id?: string,
@@ -16,9 +18,11 @@ type RecordProps = {
   },
 };
 
+// Create the Record component
 const Record: React.FC<RecordProps> = ({ record }) => {
   const [faviconUrl, setFaviconUrl] = useState('');
 
+  // Function to format the URL
   const formatUrl = (url: string | undefined) => {
     if (!url) return '';
 
@@ -29,25 +33,27 @@ const Record: React.FC<RecordProps> = ({ record }) => {
     }
 
     return formattedUrl;
-    };
+  };
 
-    const formattedTimestamp = () => {
-        if (!record.timestamp) return '';
-    
-        const timestampDate = new Date(record.timestamp);
-        const today = new Date();
-        const yesterday = new Date();
-        yesterday.setDate(yesterday.getDate() - 1);
-    
-        if (timestampDate.toDateString() === today.toDateString()) {
-          return 'Today';
-        } else if (timestampDate.toDateString() === yesterday.toDateString()) {
-          return 'Yesterday';
-        } else {
-          return timestampDate.toLocaleDateString();
-        }
-      };
+  // Function to format the timestamp
+  const formattedTimestamp = () => {
+    if (!record.timestamp) return '';
 
+    const timestampDate = new Date(record.timestamp);
+    const today = new Date();
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    if (timestampDate.toDateString() === today.toDateString()) {
+      return 'Today';
+    } else if (timestampDate.toDateString() === yesterday.toDateString()) {
+      return 'Yesterday';
+    } else {
+      return timestampDate.toLocaleDateString();
+    }
+  };
+
+  // Function to fetch the favicon URL
   const fetchFaviconUrl = () => {
     if (!record.url) return;
 
@@ -55,10 +61,12 @@ const Record: React.FC<RecordProps> = ({ record }) => {
     setFaviconUrl(faviconUrl);
   };
 
+  // Run the fetchFaviconUrl function when the component mounts
   useEffect(() => {
     fetchFaviconUrl();
   }, []);
 
+  // Render the Record component
   return (
     <div className='record-card'>
       {record.url ? (
@@ -71,14 +79,14 @@ const Record: React.FC<RecordProps> = ({ record }) => {
       )}
       {record.timestamp ? <div>{formattedTimestamp()}</div> : <br />}
       {record.domains !== 0 && <div><BsCloud /> Domains: {record.domains}</div>}
-        {record.images !== 0 && <div><BsImages /> Images: {record.images}</div>}
-        {record.audio !== 0 && <div><BsFileMusic /> Audio: {record.audio}</div>}
-        {record.video !== 0 && <div><BsFillCameraVideoFill /> Video: {record.video}</div>}
-        {record.text !== 0 && <div><BsFillFileEarmarkTextFill /> Text: {record.text}</div>}
-        {record.code !== 0 && <div><BsCodeSquare /> Code: {record.code}</div>}
-        {record.other !== 0 && <div><BsHash /> Other: {record.other}</div>}
+      {record.images !== 0 && <div><BsImages /> Images: {record.images}</div>}
+      {record.audio !== 0 && <div><BsFileMusic /> Audio: {record.audio}</div>}
+      {record.video !== 0 && <div><BsFillCameraVideoFill /> Video: {record.video}</div>}
+      {record.text !== 0 && <div><BsFillFileEarmarkTextFill /> Text: {record.text}</div>}
+      {record.code !== 0 && <div><BsCodeSquare /> Code: {record.code}</div>}
+      {record.other !== 0 && <div><BsHash /> Other: {record.other}</div>}
       {record.id ? (
-        <a className = 'report-link'href={`https://haveibeentrained.com?materialize_id=${record.id}`} target='_blank'>
+        <a className='report-link' href={`https://haveibeentrained.com?materialize_id=${record.id}`} target='_blank'>
           <BsFillFileEarmarkBarGraphFill />
         </a>
       ) : (
@@ -88,4 +96,5 @@ const Record: React.FC<RecordProps> = ({ record }) => {
   );
 };
 
+// Export the Record component
 export default Record;
