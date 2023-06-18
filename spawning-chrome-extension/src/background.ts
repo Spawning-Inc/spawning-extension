@@ -1,13 +1,12 @@
 /// <reference types="chrome" />
 
-let tabData: Record<number, { observerState: boolean; urls: UrlsType }> = {};
+// Define the tab data structure
+interface TabData {
+    observerState: boolean;
+    urls: UrlsType;
+}
 
-let observerState = true; // Add this state
-
-let background_urls: UrlsType;
-
-let onClickAction: typeof chrome.action | typeof chrome.browserAction | undefined;
-
+// Define the URL types
 type UrlsType = {
     images: string[];
     audio: string[];
@@ -18,9 +17,12 @@ type UrlsType = {
     domains: string[];
 };
 
-// Set up context menu at install time.
+// Initialize the tab data object
+let tabData: Record<number, TabData> = {};
+
+// Set up context menu at install time
 chrome.runtime.onInstalled.addListener(() => {
-    // Create one item for each context type.
+    // Create a context menu item for images
     chrome.contextMenus.create({
         "title": "Check if trained",
         "contexts": ["image"],
@@ -28,6 +30,7 @@ chrome.runtime.onInstalled.addListener(() => {
     });
 });
 
+// Update the tab data when a tab is updated
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     if (changeInfo.status === 'complete' && tab.active) {
         if (!tabData[tabId]) {
@@ -49,10 +52,10 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     }
 });
 
-// Add click event
+// Handle context menu click events
 chrome.contextMenus.onClicked.addListener(onClickHandler);
 
-// The onClicked callback function.
+// The onClicked callback function
 function onClickHandler(info: chrome.contextMenus.OnClickData, tab?: chrome.tabs.Tab): void {
     if (tab && info.menuItemId === "contextImage" && info.mediaType === "image") {
         const imageLink = encodeURIComponent(info.srcUrl as string);
@@ -63,6 +66,8 @@ function onClickHandler(info: chrome.contextMenus.OnClickData, tab?: chrome.tabs
     }
 }
 
+// Determine the appropriate onClick action based on the manifest version
+let onClickAction: typeof chrome.action | typeof chrome.browserAction | undefined;
 if (typeof chrome.action !== 'undefined') {
     onClickAction = chrome.action; // for Manifest V3
 } else if (typeof chrome.browserAction !== 'undefined') {
@@ -115,7 +120,14 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         sendResponse({ status: 'observer_disconnected' });
         if (request.tabId !== undefined) {
             // Send the observer state tab ID to background.js
-            chrome.runtime.sendMessage({ message: 'observer_disconnect', tabId: request.tabId });
+            chrome.runtime.sendMessage({ message: 'observer_disconnect', tabId: request.tabId }, (response) => {
+                if (chrome.runtime.lastError) {
+                    console.error(chrome.runtime.lastError);
+                    // Handle the error here, e.g., retry sending the message after some time
+                } else {
+                    // Handle the response here
+                }
+            });
         }
     } else if (request.message === 'get_observer_state') {
         if (request.tabId !== undefined) {
