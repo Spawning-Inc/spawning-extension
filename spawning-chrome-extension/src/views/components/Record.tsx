@@ -86,7 +86,7 @@ const Record: React.FC<RecordProps> = ({ record }) => {
       {record.code !== 0 && <div><BsCodeSquare /> Code: {record.code}</div>}
       {record.other !== 0 && <div><BsHash /> Other: {record.other}</div>}
       {record.id ? (
-        <a className='report-link' href={`https://haveibeentrained.com?materialize_id=${record.id}`} target='_blank'>
+        <a className='report-link' href={`https://haveibeentrained.com?materialize=${record.id}`} target='_blank'>
           <BsFillFileEarmarkBarGraphFill />
         </a>
       ) : (

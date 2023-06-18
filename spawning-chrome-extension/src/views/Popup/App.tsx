@@ -150,7 +150,7 @@ const createLink = async (links: Links) => {
     const { id } = response.data;
 
     // Create the link using the received id
-    a.href = `https://haveibeentrained.com?materialize_id=${id}`;
+    a.href = `https://haveibeentrained.com?materialize=${id}`;
     a.target = '_blank';
     ReactDOM.render(<BsFillFileTextFill />, a);
 
