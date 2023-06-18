@@ -3,8 +3,6 @@ import ReactDOM from 'react-dom';
 import Record from "../components/Record"
 import '../../App.css'
 
-type OptionsType = { images: boolean; audio: boolean; video: boolean; text: boolean; code: boolean; }
-
 type Links = {
   images: string[];
   audio: string[];
@@ -30,19 +28,15 @@ type RecordProps = {
   },
 };
 
+// Main App component
 function App() {
+  // State variables
   const [options, setOptions] = useState({ images: true, audio: true, video: true, text: true, code: true });
   const [urlRecords, setUrlRecords] = useState<Record<string, { links: Links; timestamp: string; currentUrl: string; }>>({});
   const [status, setStatus] = useState("");
 
+  // Effect to handle fetching URL records and visibility change
   useEffect(() => {
-    chrome.storage.sync.get(
-      { images: true, audio: true, video: true, text: true, code: true },
-      (items) => {
-        setOptions(items as OptionsType);
-      }
-    );
-  
     // Function to fetch URL records
     const fetchUrlRecords = () => {
       chrome.storage.local.get(null, function(items) {
@@ -75,6 +69,7 @@ function App() {
   
   }, []);
 
+  // Function to save options
   const saveOptions = () => {
     chrome.storage.sync.set(
       { ...options },
@@ -87,6 +82,7 @@ function App() {
     );
   };
 
+  // Function to handle checkbox change
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setOptions({
       ...options,
@@ -94,6 +90,7 @@ function App() {
     });
   };
 
+  // Render the App component
   return (
     <div id="spawning-admin-panel">
       <label>
