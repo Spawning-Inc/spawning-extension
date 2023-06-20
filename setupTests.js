@@ -1,2 +1,3 @@
-document.body.innerHTML = '<div id="root"></div>';
-require('./__mocks__/chromeMock.js');
+// jest.setup.js
+global.setImmediate = global.setTimeout;
+global.clearImmediate = global.clearTimeout;
