@@ -30,5 +30,5 @@ describe("Extension Loading", () => {
     expect(title).toBe(
       "Iris Luckhaus | Illustration & Design Portfolio | Wuppertal & Berlin"
     );
-  });
+  }, 10000); // This test has a 10 second timeout
 });

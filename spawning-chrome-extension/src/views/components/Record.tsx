@@ -1,35 +1,45 @@
 // Import necessary modules and components
-import React, { useEffect, useState } from 'react';
-import { BsImages, BsFileMusic, BsFillCameraVideoFill, BsFillFileEarmarkTextFill, BsCodeSquare, BsCloud, BsHash, BsFillFileEarmarkBarGraphFill } from 'react-icons/bs';
+import React, { useEffect, useState } from "react";
+import {
+  BsImages,
+  BsFileMusic,
+  BsFillCameraVideoFill,
+  BsFillFileEarmarkTextFill,
+  BsCodeSquare,
+  BsCloud,
+  BsHash,
+  BsFillFileEarmarkBarGraphFill,
+} from "react-icons/bs";
 
 // Define the type for RecordProps
 type RecordProps = {
   record: {
-    id?: string,
-    url?: string,
-    timestamp?: string,
-    domains: number,
-    images: number,
-    audio: number,
-    video: number,
-    text: number,
-    code: number,
-    other: number,
-  },
+    id?: string;
+    url?: string;
+    timestamp?: string;
+    hibtLink?: string;
+    domains: number;
+    images: number;
+    audio: number;
+    video: number;
+    text: number;
+    code: number;
+    other: number;
+  };
 };
 
 // Create the Record component
 const Record: React.FC<RecordProps> = ({ record }) => {
-  const [faviconUrl, setFaviconUrl] = useState('');
+  const [faviconUrl, setFaviconUrl] = useState("");
 
   // Function to format the URL
   const formatUrl = (url: string | undefined) => {
-    if (!url) return '';
+    if (!url) return "";
 
-    let formattedUrl = url.replace(/(https?:\/\/)?(www\.)?/, '');
+    let formattedUrl = url.replace(/(https?:\/\/)?(www\.)?/, "");
 
     if (formattedUrl.length > 25) {
-      formattedUrl = formattedUrl.slice(0, 25) + '...';
+      formattedUrl = formattedUrl.slice(0, 25) + "...";
     }
 
     return formattedUrl;
@@ -37,7 +47,7 @@ const Record: React.FC<RecordProps> = ({ record }) => {
 
   // Function to format the timestamp
   const formattedTimestamp = () => {
-    if (!record.timestamp) return '';
+    if (!record.timestamp) return "";
 
     const timestampDate = new Date(record.timestamp);
     const today = new Date();
@@ -45,9 +55,9 @@ const Record: React.FC<RecordProps> = ({ record }) => {
     yesterday.setDate(yesterday.getDate() - 1);
 
     if (timestampDate.toDateString() === today.toDateString()) {
-      return 'Today';
+      return "Today";
     } else if (timestampDate.toDateString() === yesterday.toDateString()) {
-      return 'Yesterday';
+      return "Yesterday";
     } else {
       return timestampDate.toLocaleDateString();
     }
@@ -68,25 +78,55 @@ const Record: React.FC<RecordProps> = ({ record }) => {
 
   // Render the Record component
   return (
-    <div className='record-card'>
+    <div className="record-card">
       {record.url ? (
         <>
           {faviconUrl && <img src={faviconUrl} alt="Favicon" />}
-          <a href={record.url} target="_blank" rel="noopener noreferrer">{formatUrl(record.url)}</a>
+          <a href={record.url} target="_blank" rel="noopener noreferrer">
+            {formatUrl(record.url)}
+          </a>
         </>
       ) : (
         <br />
       )}
       {record.timestamp ? <div>{formattedTimestamp()}</div> : <br />}
-      {record.domains !== 0 && <div><BsCloud /> Domains: {record.domains}</div>}
-      {record.images !== 0 && <div><BsImages /> Images: {record.images}</div>}
-      {record.audio !== 0 && <div><BsFileMusic /> Audio: {record.audio}</div>}
-      {record.video !== 0 && <div><BsFillCameraVideoFill /> Video: {record.video}</div>}
-      {record.text !== 0 && <div><BsFillFileEarmarkTextFill /> Text: {record.text}</div>}
-      {record.code !== 0 && <div><BsCodeSquare /> Code: {record.code}</div>}
-      {record.other !== 0 && <div><BsHash /> Other: {record.other}</div>}
-      {record.id ? (
-        <a className='report-link' href={`https://patrick-materialize.spawning-have-i-been-trained.pages.dev/?materialize=${record.id}`} target='_blank'>
+      {record.domains !== 0 && (
+        <div>
+          <BsCloud /> Domains: {record.domains}
+        </div>
+      )}
+      {record.images !== 0 && (
+        <div>
+          <BsImages /> Images: {record.images}
+        </div>
+      )}
+      {record.audio !== 0 && (
+        <div>
+          <BsFileMusic /> Audio: {record.audio}
+        </div>
+      )}
+      {record.video !== 0 && (
+        <div>
+          <BsFillCameraVideoFill /> Video: {record.video}
+        </div>
+      )}
+      {record.text !== 0 && (
+        <div>
+          <BsFillFileEarmarkTextFill /> Text: {record.text}
+        </div>
+      )}
+      {record.code !== 0 && (
+        <div>
+          <BsCodeSquare /> Code: {record.code}
+        </div>
+      )}
+      {record.other !== 0 && (
+        <div>
+          <BsHash /> Other: {record.other}
+        </div>
+      )}
+      {record.hibtLink ? (
+        <a className="report-link" href={record.hibtLink} target="_blank">
           <BsFillFileEarmarkBarGraphFill />
         </a>
       ) : (
