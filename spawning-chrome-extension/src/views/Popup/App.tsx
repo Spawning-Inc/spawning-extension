@@ -6,6 +6,8 @@ import Record from "../components/Record";
 import StatusMessage from "../components/StatusMessage";
 import CryptoJS from "crypto-js";
 import { v4 as uuidv4 } from "uuid";
+import Lottie from "lottie-react";
+import searching from "../../assets/lottie/searching.json";
 
 import "../../App.css";
 
@@ -17,6 +19,7 @@ function App() {
   const [searchComplete, setSearchComplete] = useState(false);
   const [observerActive, setObserverActive] = useState(true);
   const [status, setStatus] = useState<string>("");
+  const [animationData, setAnimationData] = useState(null);
   const fetchIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const retryCount = useRef(0);
 
@@ -57,6 +60,19 @@ function App() {
     code: 0,
     other: 0,
   });
+
+  useEffect(() => {
+    const animationUrl =
+      "https://assets7.lottiefiles.com/packages/lf20_lxd6qbf3.json";
+    axios
+      .get(animationUrl)
+      .then((response) => {
+        setAnimationData(response.data);
+      })
+      .catch((error) => {
+        console.error("Failed to fetch lottie file:", error);
+      });
+  }, []);
 
   // Function to get the observer state from the active tab
   const getObserverState = () => {
@@ -372,13 +388,8 @@ function App() {
               </button>
             )}
             {/* Show the searching animation if scraping has started and search is not complete */}
-            {scrapingStarted && !searchComplete && (
-              <img
-                id="searching"
-                src="../assets/searching.gif"
-                alt="Searching icon"
-                height={100}
-              />
+            {scrapingStarted && !searchComplete && animationData && (
+              <Lottie animationData={searching} loop={true} />
             )}
           </div>
           {/* Display the record component */}
