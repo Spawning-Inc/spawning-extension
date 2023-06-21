@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
 import Record from "../components/Record";
 import "../../App.css";
+import "@dotlottie/player-component";
 
 type Links = {
   images: string[];
@@ -107,6 +108,14 @@ function App() {
   // Render the App component
   return (
     <div id="spawning-admin-panel">
+      <div>
+        <dotlottie-player
+          src="../../assets/lottie/searching.lottie"
+          autoplay
+          loop
+          style={{ height: "50%", width: "50%" }}
+        />
+      </div>
       <label>
         <input
           type="checkbox"
