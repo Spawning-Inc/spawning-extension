@@ -5,10 +5,11 @@ import { BsFillFileTextFill, BsInfoCircle } from "react-icons/bs";
 import StatusMessage from "../components/StatusMessage";
 import CryptoJS from "crypto-js";
 import { v4 as uuidv4 } from "uuid";
+import ConfigureIcon from "../../assets/icons/ConfigureIcon";
+import SearchIcon from "../../assets/icons/SearchIcon";
 
 import styles from "./popupApp.module.scss";
-import SearchIcon from "../../assets/icons/searchIcon";
-import ConfigureIcon from "../../assets/icons/ConfigureIcon";
+import Config from "../components/Config/Config";
 
 function App() {
   // State variables
@@ -21,6 +22,16 @@ function App() {
   const [isConfigurationOpen, setIsConfigurationOpen] = useState(false);
   const fetchIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const retryCount = useRef(0);
+
+  const [configOptions, setConfigOptions] = useState({
+    images: true,
+    audio: true,
+    video: true,
+    text: true,
+    code: true,
+  });
+
+  console.log("Config options:", configOptions);
 
   // Interface for Links
   interface Links {
@@ -355,6 +366,14 @@ function App() {
     };
   }, []);
 
+  // Function to handle checkbox change
+  const handleConfigChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setConfigOptions({
+      ...configOptions,
+      [e.target.id]: e.target.checked,
+    });
+  };
+
   return (
     <div>
       <body>
@@ -400,6 +419,13 @@ function App() {
             >
               <ConfigureIcon />
             </button>
+          </div>
+
+          <div>
+            <Config
+              configOptions={configOptions}
+              handleConfigChange={handleConfigChange}
+            />
           </div>
 
           <StatusMessage status={status} />
