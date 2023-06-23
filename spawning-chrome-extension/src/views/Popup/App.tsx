@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import ReactDOM from "react-dom";
 import axios from "axios";
 import { BsFillInfoCircleFill, BsFillFileTextFill } from "react-icons/bs";
-import Record from "../components/Record";
+import Record from "../components/Record/Record";
 import StatusMessage from "../components/StatusMessage";
 import CryptoJS from "crypto-js";
 import { v4 as uuidv4 } from "uuid";

@@ -1,0 +1,43 @@
+.recordCard {
+  width: 250px;
+  height: 250px;
+  margin: 10px;
+  padding: 20px;
+  box-sizing: border-box;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+.recordCard {
+  font-size: 16px;
+  display: flex;
+}
+
+.recordCard img {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  margin-right: 8px;
+}
+
+.recordCard a {
+  display: inline-flex;
+  align-items: center;
+}
+
+.reportLink {
+  position: absolute;
+  padding-left: 180px;
+  padding-top: 180px;
+  font-size: 28px;
+  color: #6f80ff;
+}
+
+/* Media query for responsiveness */
+@media (max-width: 768px) {
+  .recordCard {
+    width: 100%;
+  }
+}

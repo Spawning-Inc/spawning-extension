@@ -11,6 +11,8 @@ import {
   BsFillFileEarmarkBarGraphFill,
 } from "react-icons/bs";
 
+import styles from "./Record.module.scss";
+
 // Define the type for RecordProps
 type RecordProps = {
   record: {
@@ -78,7 +80,7 @@ const Record: React.FC<RecordProps> = ({ record }) => {
 
   // Render the Record component
   return (
-    <div className="record-card">
+    <div className={styles.recordCard}>
       {record.url ? (
         <>
           {faviconUrl && <img src={faviconUrl} alt="Favicon" />}
@@ -126,7 +128,7 @@ const Record: React.FC<RecordProps> = ({ record }) => {
         </div>
       )}
       {record.hibtLink ? (
-        <a className="report-link" href={record.hibtLink} target="_blank">
+        <a className={styles.reportLink} href={record.hibtLink} target="_blank">
           <BsFillFileEarmarkBarGraphFill />
         </a>
       ) : (

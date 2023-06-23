@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
-import Record from "../components/Record";
+import Record from "../components/Record/Record";
 import "../../App.css";
 
 type Links = {
