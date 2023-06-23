@@ -410,24 +410,24 @@ function App() {
             )}
           </div>
 
-          <div className={styles.configureWrapper}>
+          <button
+            type="button"
+            className={styles.configureButton}
+            onClick={() => setIsConfigurationOpen(!isConfigurationOpen)}
+          >
             Configure
-            <button
-              type="button"
-              className={styles.configureButton}
-              onClick={() => setIsConfigurationOpen(!isConfigurationOpen)}
-            >
-              <ConfigureIcon />
-            </button>
-          </div>
+            <ConfigureIcon />
+          </button>
 
-          <div className={styles.configAndButtonWrapper}>
-            <Config
-              configOptions={configOptions}
-              handleConfigChange={handleConfigChange}
-            />
-            <button className={styles.saveButton}>Save</button>
-          </div>
+          {isConfigurationOpen ? (
+            <div className={styles.configAndButtonWrapper}>
+              <Config
+                configOptions={configOptions}
+                handleConfigChange={handleConfigChange}
+              />
+              <button className={styles.saveButton}>Save</button>
+            </div>
+          ) : null}
 
           <StatusMessage status={status} />
         </div>
