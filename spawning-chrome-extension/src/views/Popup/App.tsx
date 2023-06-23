@@ -1,13 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
 import ReactDOM from "react-dom";
 import axios from "axios";
-import { BsFillInfoCircleFill, BsFillFileTextFill } from "react-icons/bs";
-import Record from "../components/Record/Record";
+import { BsFillFileTextFill, BsInfoCircle } from "react-icons/bs";
 import StatusMessage from "../components/StatusMessage";
 import CryptoJS from "crypto-js";
 import { v4 as uuidv4 } from "uuid";
 
-import "../../App.css";
+import styles from "./popupApp.module.scss";
+import SearchIcon from "../../assets/icons/searchIcon";
+import ConfigureIcon from "../../assets/icons/ConfigureIcon";
 
 function App() {
   // State variables
@@ -17,6 +18,7 @@ function App() {
   const [searchComplete, setSearchComplete] = useState(false);
   const [observerActive, setObserverActive] = useState(true);
   const [status, setStatus] = useState<string>("");
+  const [isConfigurationOpen, setIsConfigurationOpen] = useState(false);
   const fetchIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const retryCount = useRef(0);
 
@@ -354,24 +356,31 @@ function App() {
   }, []);
 
   return (
-    <div className="App">
-      {/* Link to the stylesheet */}
-      <body id="spawning-admin-panel">
-        <div className="content">
-          {/* Display header image */}
-          <img src="../assets/header.svg" alt="icon" width={250} />
-          <div id="main-content">
-            {/* Show the "Inspect" button if scraping has not started and scripts are active */}
+    <div>
+      <body>
+        <div className={styles.wrapper}>
+          <div className={styles.header}>
+            <img src="../assets/header.svg" alt="icon" width={150} />
+            <button className={styles.infoButton} onClick={handleOptionsClick}>
+              <BsInfoCircle />
+            </button>
+          </div>
+
+          <div className={styles.contentWrapper}>
+            <p className={styles.text}>
+              Does this page contain content in public datasets used to train AI
+              models? Click &#34;Inspect&#34; to find out.
+            </p>
             {!scrapingStarted && scriptsActive && (
               <button
-                id="start-scraping"
-                className="buttonSecondary"
+                className={styles.inspectButton}
                 onClick={handleScrapeClick}
               >
                 Inspect
+                <SearchIcon />
               </button>
             )}
-            {/* Show the searching animation if scraping has started and search is not complete */}
+
             {scrapingStarted && !searchComplete && (
               <img
                 id="searching"
@@ -381,14 +390,19 @@ function App() {
               />
             )}
           </div>
-          {/* Display the record component */}
-          <Record record={record} />
-          {/* Display the status message component */}
+
+          <div className={styles.configureWrapper}>
+            Configure
+            <button
+              type="button"
+              className={styles.configureButton}
+              onClick={() => setIsConfigurationOpen(!isConfigurationOpen)}
+            >
+              <ConfigureIcon />
+            </button>
+          </div>
+
           <StatusMessage status={status} />
-          {/* Display the options button */}
-          <button id="go-to-options" onClick={handleOptionsClick}>
-            <BsFillInfoCircleFill />
-          </button>
         </div>
       </body>
     </div>
