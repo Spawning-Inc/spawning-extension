@@ -39,6 +39,7 @@ const Config: React.FC<ConfigProps> = ({
             onChange={handleConfigChange}
           />
         </label>
+        <div className={styles.divider} />
         <label className={styles.label}>
           <span className={styles.iconLabelWrapper}>
             <ImagesIcon />
@@ -50,6 +51,8 @@ const Config: React.FC<ConfigProps> = ({
             onChange={handleConfigChange}
           />
         </label>
+        <div className={styles.divider} />
+
         <label className={styles.label}>
           <span className={styles.iconLabelWrapper}>
             <AudioIcon />
@@ -61,6 +64,8 @@ const Config: React.FC<ConfigProps> = ({
             onChange={handleConfigChange}
           />
         </label>
+        <div className={styles.divider} />
+
         <label className={styles.label}>
           <span className={styles.iconLabelWrapper}>
             <VideoIcon />
@@ -72,6 +77,7 @@ const Config: React.FC<ConfigProps> = ({
             onChange={handleConfigChange}
           />
         </label>
+        <div className={styles.divider} />
         <label className={styles.label}>
           <span className={styles.iconLabelWrapper}>
             <CodeIcon />

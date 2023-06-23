@@ -1,6 +1,6 @@
 .configWrapper {
+  margin-top: 16px;
   padding: 16px 24px;
-  margin: 16px 24px;
   border: 1px solid #eaecf0;
   border-radius: 8px;
 }
@@ -25,4 +25,11 @@
   align-items: center;
   gap: 8px;
   font-size: 20px;
+}
+
+.divider {
+  height: 1px;
+  background-color: #eaecf0;
+  padding: 0 24px;
+  width: 100%;
 }

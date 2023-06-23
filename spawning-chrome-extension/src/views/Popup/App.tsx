@@ -421,11 +421,12 @@ function App() {
             </button>
           </div>
 
-          <div>
+          <div className={styles.configAndButtonWrapper}>
             <Config
               configOptions={configOptions}
               handleConfigChange={handleConfigChange}
             />
+            <button className={styles.saveButton}>Save</button>
           </div>
 
           <StatusMessage status={status} />

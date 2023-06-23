@@ -40,7 +40,8 @@
   }
 }
 
-.inspectButton {
+.inspectButton,
+.saveButton {
   background-color: #3f55ff;
   display: flex;
   align-items: center;
@@ -66,6 +67,12 @@
   gap: 8px;
   font-size: 16px;
   padding-top: 16px;
+}
+
+.configAndButtonWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .configureButton {
