@@ -7,6 +7,7 @@ import CryptoJS from "crypto-js";
 import { v4 as uuidv4 } from "uuid";
 import ConfigureIcon from "../../assets/icons/ConfigureIcon";
 import SearchIcon from "../../assets/icons/SearchIcon";
+import "@dotlottie/player-component";
 
 import styles from "./popupApp.module.scss";
 import Config from "../components/Config/Config";
@@ -411,11 +412,11 @@ function App() {
             )}
 
             {scrapingStarted && !searchComplete && (
-              <img
-                id="searching"
-                src="../assets/searching.gif"
-                alt="Searching icon"
-                height={100}
+              <dotlottie-player
+                src="../../assets/lottie/searching.lottie"
+                autoplay
+                loop
+                style={{ height: "100%", width: "100%" }}
               />
             )}
           </div>
