@@ -18,7 +18,8 @@ function App() {
   const [scrapingStarted, setScrapingStarted] = useState(false);
   const [searchComplete, setSearchComplete] = useState(false);
   const [observerActive, setObserverActive] = useState(true);
-  const [status, setStatus] = useState<string>("");
+  const [optionsSavedSuccessfully, setOptionsSavedSuccessfully] =
+    useState(false);
   const [isConfigurationOpen, setIsConfigurationOpen] = useState(false);
   const fetchIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const retryCount = useRef(0);
@@ -95,7 +96,6 @@ function App() {
   // Effect hook to handle observer state changes
   useEffect(() => {
     if (!observerActive) {
-      setStatus("Complete");
       setSearchComplete(true);
       getLinks()
         .then((links) => {
@@ -374,6 +374,16 @@ function App() {
     });
   };
 
+  const saveOptions = () => {
+    chrome.storage.sync.set({ ...configOptions }, () => {
+      setOptionsSavedSuccessfully(true);
+
+      setTimeout(() => {
+        setOptionsSavedSuccessfully(false);
+      }, 5000);
+    });
+  };
+
   return (
     <div>
       <body>
@@ -425,11 +435,17 @@ function App() {
                 configOptions={configOptions}
                 handleConfigChange={handleConfigChange}
               />
-              <button className={styles.saveButton}>Save</button>
+              {optionsSavedSuccessfully ? (
+                <div className={styles.statusMessage}>
+                  <p>Configuration saved!</p>
+                </div>
+              ) : (
+                <button className={styles.saveButton} onClick={saveOptions}>
+                  Save
+                </button>
+              )}
             </div>
           ) : null}
-
-          <StatusMessage status={status} />
         </div>
       </body>
     </div>
