@@ -11,6 +11,7 @@ import "@dotlottie/player-component";
 
 import styles from "./popupApp.module.scss";
 import Config from "../components/Config/Config";
+import Record from "../components/Record/Record";
 
 function App() {
   // State variables
@@ -133,6 +134,7 @@ function App() {
 
   // Function to handle scrape button click
   const handleScrapeClick = () => {
+    setIsConfigurationOpen(false);
     setScrapingStarted(true);
     return new Promise((resolve, reject) => {
       chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
@@ -447,6 +449,8 @@ function App() {
               )}
             </div>
           ) : null}
+
+          {record && searchComplete ? <Record record={record} /> : null}
         </div>
       </body>
     </div>
