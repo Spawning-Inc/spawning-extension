@@ -1,0 +1,35 @@
+.configWrapper {
+  margin-top: 16px;
+  padding: 16px 24px;
+  border: 1px solid #eaecf0;
+  border-radius: 8px;
+}
+
+.config {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.label {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.iconLabelWrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 20px;
+}
+
+.divider {
+  height: 1px;
+  background-color: #eaecf0;
+  padding: 0 24px;
+  width: 100%;
+}

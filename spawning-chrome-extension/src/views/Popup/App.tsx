@@ -1,14 +1,26 @@
 import React, { useEffect, useRef, useState } from "react";
 import ReactDOM from "react-dom";
 import axios from "axios";
-import { BsFillInfoCircleFill, BsFillFileTextFill } from "react-icons/bs";
-import Record from "../components/Record";
+import { BsFillFileTextFill, BsInfoCircle } from "react-icons/bs";
 import StatusMessage from "../components/StatusMessage";
 import CryptoJS from "crypto-js";
 import { v4 as uuidv4 } from "uuid";
+import ConfigureIcon from "../../assets/icons/ConfigureIcon";
+import SearchIcon from "../../assets/icons/SearchIcon";
 import "@dotlottie/player-component";
 
-import "../../App.css";
+import styles from "./popupApp.module.scss";
+import Config from "../components/Config/Config";
+import Record from "../components/Record/Record";
+import ArrowUpRightIcon from "../../assets/icons/ArrowUpRightIcon";
+
+type Config = {
+  images: boolean;
+  audio: boolean;
+  video: boolean;
+  text: boolean;
+  code: boolean;
+};
 
 function App() {
   // State variables
@@ -17,9 +29,16 @@ function App() {
   const [scrapingStarted, setScrapingStarted] = useState(false);
   const [searchComplete, setSearchComplete] = useState(false);
   const [observerActive, setObserverActive] = useState(true);
-  const [status, setStatus] = useState<string>("");
+  const [optionsSavedSuccessfully, setOptionsSavedSuccessfully] =
+    useState(false);
+  const [isConfigurationOpen, setIsConfigurationOpen] = useState(false);
   const fetchIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const retryCount = useRef(0);
+
+  const [savedConfigOptions, setSavedConfigOptions] = useState<any>();
+
+  const [configOptions, setConfigOptions] =
+    useState<Config>(savedConfigOptions);
 
   // Interface for Links
   interface Links {
@@ -59,6 +78,20 @@ function App() {
     other: 0,
   });
 
+  useEffect(() => {
+    const handleConfigDefaultValues = async () => {
+      await chrome.storage.sync.get(null, (result) => {
+        setSavedConfigOptions(result);
+      });
+    };
+
+    handleConfigDefaultValues();
+  }, []);
+
+  useEffect(() => {
+    setConfigOptions(savedConfigOptions);
+  }, [savedConfigOptions]);
+
   // Function to get the observer state from the active tab
   const getObserverState = () => {
     chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
@@ -83,7 +116,6 @@ function App() {
   // Effect hook to handle observer state changes
   useEffect(() => {
     if (!observerActive) {
-      setStatus("Complete");
       setSearchComplete(true);
       getLinks()
         .then((links) => {
@@ -120,6 +152,7 @@ function App() {
 
   // Function to handle scrape button click
   const handleScrapeClick = () => {
+    setIsConfigurationOpen(false);
     setScrapingStarted(true);
     return new Promise((resolve, reject) => {
       chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
@@ -241,14 +274,24 @@ function App() {
             const { domains, images, audio, video, text, code, other } =
               response.urls;
 
+            const turnedOnOptions = Object.entries(configOptions).map((i) =>
+              i[1] === true ? i[0] : null
+            );
+
             setRecord((prevRecord) => ({
               ...prevRecord,
               domains: domains ? domains.length : 0,
-              images: images ? images.length : 0,
-              audio: audio ? audio.length : 0,
-              video: video ? video.length : 0,
-              text: text ? text.length : 0,
-              code: code ? code.length : 0,
+              images: turnedOnOptions.includes("images")
+                ? images.length
+                : undefined,
+              audio: turnedOnOptions.includes("audio")
+                ? audio.length
+                : undefined,
+              video: turnedOnOptions.includes("video")
+                ? video.length
+                : undefined,
+              text: turnedOnOptions.includes("text") ? text.length : undefined,
+              code: turnedOnOptions.includes("code") ? code.length : undefined,
               other: other ? other.length : 0,
             }));
           }
@@ -354,25 +397,60 @@ function App() {
     };
   }, []);
 
+  useEffect(() => {
+    if (optionsSavedSuccessfully) {
+      setTimeout(() => {
+        setIsConfigurationOpen(false);
+      }, 2000);
+
+      return;
+    }
+  }, [optionsSavedSuccessfully]);
+
+  // Function to handle checkbox change
+  const handleConfigChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setConfigOptions({
+      ...configOptions,
+      [e.target.id]: e.target.checked,
+    });
+  };
+
+  const saveOptions = () => {
+    chrome.storage.sync.set({ ...configOptions }, () => {
+      setOptionsSavedSuccessfully(true);
+
+      setTimeout(() => {
+        setOptionsSavedSuccessfully(false);
+      }, 5000);
+    });
+  };
+
   return (
-    <div className="App">
-      {/* Link to the stylesheet */}
-      <body id="spawning-admin-panel">
-        <div className="content">
-          {/* Display header image */}
-          <img src="../assets/header.svg" alt="icon" width={250} />
-          <div id="main-content">
-            {/* Show the "Inspect" button if scraping has not started and scripts are active */}
+    <div>
+      <body>
+        <div className={styles.wrapper}>
+          <div className={styles.header}>
+            <img src="../assets/header.svg" alt="icon" width={150} />
+            <button className={styles.infoButton} onClick={handleOptionsClick}>
+              <BsInfoCircle />
+            </button>
+          </div>
+
+          <div className={styles.contentWrapper}>
+            <p className={styles.text}>
+              Does this page contain content in public datasets used to train AI
+              models? Click &#34;Inspect&#34; to find out.
+            </p>
             {!scrapingStarted && scriptsActive && (
               <button
-                id="start-scraping"
-                className="buttonSecondary"
+                className={styles.inspectButton}
                 onClick={handleScrapeClick}
               >
                 Inspect
+                <SearchIcon />
               </button>
             )}
-            {/* Show the searching animation if scraping has started and search is not complete */}
+
             {scrapingStarted && !searchComplete && (
               <dotlottie-player
                 src="../../assets/lottie/searching.lottie"
@@ -382,14 +460,50 @@ function App() {
               />
             )}
           </div>
-          {/* Display the record component */}
-          <Record record={record} />
-          {/* Display the status message component */}
-          <StatusMessage status={status} />
-          {/* Display the options button */}
-          <button id="go-to-options" onClick={handleOptionsClick}>
-            <BsFillInfoCircleFill />
-          </button>
+
+          {!searchComplete && !scrapingStarted && (
+            <button
+              type="button"
+              className={styles.configureButton}
+              onClick={() => setIsConfigurationOpen(!isConfigurationOpen)}
+            >
+              Configure
+              <ConfigureIcon />
+            </button>
+          )}
+
+          {isConfigurationOpen ? (
+            <div className={styles.configAndButtonWrapper}>
+              <Config
+                configOptions={configOptions}
+                handleConfigChange={handleConfigChange}
+              />
+              {optionsSavedSuccessfully ? (
+                <div className={styles.statusMessage}>
+                  <p>Configuration saved!</p>
+                </div>
+              ) : (
+                <button className={styles.saveButton} onClick={saveOptions}>
+                  Save
+                </button>
+              )}
+            </div>
+          ) : null}
+
+          {record && searchComplete ? (
+            <div className={styles.recordWrapper}>
+              <Record record={record} />
+              <button
+                className={styles.viewResultButton}
+                onClick={() => {
+                  window.open(record.hibtLink || "");
+                }}
+              >
+                View Media
+                <ArrowUpRightIcon />
+              </button>
+            </div>
+          ) : null}
         </div>
       </body>
     </div>

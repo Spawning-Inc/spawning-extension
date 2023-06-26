@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
-import Record from "../components/Record";
+import Record from "../components/Record/Record";
 import "../../App.css";
 import "@dotlottie/player-component";
 
@@ -169,6 +169,7 @@ function App() {
       <button id="save" onClick={saveOptions}>
         Save
       </button>
+
       <div id="urlRecords" className="record-container">
         {Object.entries(urlRecords).map(([id, record]) => {
           const recordProps: RecordProps["record"] = [
