@@ -7,16 +7,12 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 200px;
   border-bottom: 1px solid #707070;
-  padding: 16px;
+  padding: 0 16px 16px 16px;
   text-align: center;
 }
 
 .infoButton {
-  position: fixed;
-  top: 20px;
-  right: 20px;
   background-color: transparent;
   border: none;
   font-size: 18px;
@@ -41,7 +37,8 @@
 }
 
 .inspectButton,
-.saveButton {
+.saveButton,
+.viewResultButton {
   background-color: #3f55ff;
   display: flex;
   align-items: center;
@@ -86,4 +83,10 @@
   display: flex;
   justify-content: center;
   font-size: 16px;
+}
+
+.recordWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }

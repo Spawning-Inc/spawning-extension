@@ -12,6 +12,15 @@ import "@dotlottie/player-component";
 import styles from "./popupApp.module.scss";
 import Config from "../components/Config/Config";
 import Record from "../components/Record/Record";
+import ArrowUpRightIcon from "../../assets/icons/ArrowUpRightIcon";
+
+type Config = {
+  images: boolean;
+  audio: boolean;
+  video: boolean;
+  text: boolean;
+  code: boolean;
+};
 
 function App() {
   // State variables
@@ -26,15 +35,10 @@ function App() {
   const fetchIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const retryCount = useRef(0);
 
-  const [configOptions, setConfigOptions] = useState({
-    images: true,
-    audio: true,
-    video: true,
-    text: true,
-    code: true,
-  });
+  const [savedConfigOptions, setSavedConfigOptions] = useState<any>();
 
-  console.log("Config options:", configOptions);
+  const [configOptions, setConfigOptions] =
+    useState<Config>(savedConfigOptions);
 
   // Interface for Links
   interface Links {
@@ -73,6 +77,20 @@ function App() {
     code: 0,
     other: 0,
   });
+
+  useEffect(() => {
+    const handleConfigDefaultValues = async () => {
+      await chrome.storage.sync.get(null, (result) => {
+        setSavedConfigOptions(result);
+      });
+    };
+
+    handleConfigDefaultValues();
+  }, []);
+
+  useEffect(() => {
+    setConfigOptions(savedConfigOptions);
+  }, [savedConfigOptions]);
 
   // Function to get the observer state from the active tab
   const getObserverState = () => {
@@ -256,14 +274,24 @@ function App() {
             const { domains, images, audio, video, text, code, other } =
               response.urls;
 
+            const turnedOnOptions = Object.entries(configOptions).map((i) =>
+              i[1] === true ? i[0] : null
+            );
+
             setRecord((prevRecord) => ({
               ...prevRecord,
               domains: domains ? domains.length : 0,
-              images: images ? images.length : 0,
-              audio: audio ? audio.length : 0,
-              video: video ? video.length : 0,
-              text: text ? text.length : 0,
-              code: code ? code.length : 0,
+              images: turnedOnOptions.includes("images")
+                ? images.length
+                : undefined,
+              audio: turnedOnOptions.includes("audio")
+                ? audio.length
+                : undefined,
+              video: turnedOnOptions.includes("video")
+                ? video.length
+                : undefined,
+              text: turnedOnOptions.includes("text") ? text.length : undefined,
+              code: turnedOnOptions.includes("code") ? code.length : undefined,
               other: other ? other.length : 0,
             }));
           }
@@ -369,6 +397,16 @@ function App() {
     };
   }, []);
 
+  useEffect(() => {
+    if (optionsSavedSuccessfully) {
+      setTimeout(() => {
+        setIsConfigurationOpen(false);
+      }, 2000);
+
+      return;
+    }
+  }, [optionsSavedSuccessfully]);
+
   // Function to handle checkbox change
   const handleConfigChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setConfigOptions({
@@ -423,14 +461,16 @@ function App() {
             )}
           </div>
 
-          <button
-            type="button"
-            className={styles.configureButton}
-            onClick={() => setIsConfigurationOpen(!isConfigurationOpen)}
-          >
-            Configure
-            <ConfigureIcon />
-          </button>
+          {!searchComplete && !scrapingStarted && (
+            <button
+              type="button"
+              className={styles.configureButton}
+              onClick={() => setIsConfigurationOpen(!isConfigurationOpen)}
+            >
+              Configure
+              <ConfigureIcon />
+            </button>
+          )}
 
           {isConfigurationOpen ? (
             <div className={styles.configAndButtonWrapper}>
@@ -450,7 +490,20 @@ function App() {
             </div>
           ) : null}
 
-          {record && searchComplete ? <Record record={record} /> : null}
+          {record && searchComplete ? (
+            <div className={styles.recordWrapper}>
+              <Record record={record} />
+              <button
+                className={styles.viewResultButton}
+                onClick={() => {
+                  window.open(record.hibtLink || "");
+                }}
+              >
+                View Media
+                <ArrowUpRightIcon />
+              </button>
+            </div>
+          ) : null}
         </div>
       </body>
     </div>

@@ -1,17 +1,12 @@
 // Import necessary modules and components
 import React, { useEffect, useState } from "react";
-import {
-  BsImages,
-  BsFileMusic,
-  BsFillCameraVideoFill,
-  BsFillFileEarmarkTextFill,
-  BsCodeSquare,
-  BsCloud,
-  BsHash,
-  BsFillFileEarmarkBarGraphFill,
-} from "react-icons/bs";
 
 import styles from "./Record.module.scss";
+import ImagesIcon from "../../../assets/icons/ImagesIcon";
+import AudioIcon from "../../../assets/icons/AudioIcon";
+import VideoIcon from "../../../assets/icons/VideoIcon";
+import TextIcon from "../../../assets/icons/TextIcon";
+import CodeIcon from "../../../assets/icons/CodeIcon";
 
 // Define the type for RecordProps
 type RecordProps = {
@@ -80,60 +75,97 @@ const Record: React.FC<RecordProps> = ({ record }) => {
 
   // Render the Record component
   return (
-    <div className={styles.recordCard}>
-      {record.url ? (
-        <>
-          {faviconUrl && <img src={faviconUrl} alt="Favicon" />}
-          <a href={record.url} target="_blank" rel="noopener noreferrer">
-            {formatUrl(record.url)}
-          </a>
-        </>
-      ) : (
-        <br />
-      )}
-      {record.timestamp ? <div>{formattedTimestamp()}</div> : <br />}
-      {record.domains !== 0 && (
-        <div>
-          <BsCloud /> Domains: {record.domains}
-        </div>
-      )}
-      {record.images !== 0 && (
-        <div>
-          <BsImages /> Images: {record.images}
-        </div>
-      )}
-      {record.audio !== 0 && (
-        <div>
-          <BsFileMusic /> Audio: {record.audio}
-        </div>
-      )}
-      {record.video !== 0 && (
-        <div>
-          <BsFillCameraVideoFill /> Video: {record.video}
-        </div>
-      )}
-      {record.text !== 0 && (
-        <div>
-          <BsFillFileEarmarkTextFill /> Text: {record.text}
-        </div>
-      )}
-      {record.code !== 0 && (
-        <div>
-          <BsCodeSquare /> Code: {record.code}
-        </div>
-      )}
-      {record.other !== 0 && (
-        <div>
-          <BsHash /> Other: {record.other}
-        </div>
-      )}
-      {record.hibtLink ? (
-        <a className={styles.reportLink} href={record.hibtLink} target="_blank">
-          <BsFillFileEarmarkBarGraphFill />
-        </a>
-      ) : (
-        <br />
-      )}
+    <div className={styles.recordCardWrapper}>
+      <div className={styles.recordCard}>
+        {record.domains !== undefined ? (
+          <>
+            <label className={styles.label}>
+              <span className={styles.iconLabelWrapper}>
+                <TextIcon />
+                <div>Domains</div>
+              </span>
+              <div className={styles.results}>{record.domains}</div>
+            </label>
+            <div className={styles.divider} />
+          </>
+        ) : null}
+
+        {record.images !== undefined ? (
+          <>
+            <label className={styles.label}>
+              <span className={styles.iconLabelWrapper}>
+                <ImagesIcon />
+                <div>Images</div>
+              </span>
+              <div className={styles.results}>{record.images}</div>
+            </label>
+            <div className={styles.divider} />
+          </>
+        ) : null}
+
+        {record.audio !== undefined ? (
+          <>
+            <label className={styles.label}>
+              <span className={styles.iconLabelWrapper}>
+                <AudioIcon />
+                <div>Audio</div>
+              </span>
+              <div className={styles.results}>{record.audio}</div>
+            </label>
+            <div className={styles.divider} />
+          </>
+        ) : null}
+
+        {record.video !== undefined ? (
+          <>
+            <label className={styles.label}>
+              <span className={styles.iconLabelWrapper}>
+                <VideoIcon />
+                <div>Video</div>
+              </span>
+              <div className={styles.results}>{record.video}</div>
+            </label>
+            <div className={styles.divider} />
+          </>
+        ) : null}
+
+        {record.text !== undefined ? (
+          <>
+            <label className={styles.label}>
+              <span className={styles.iconLabelWrapper}>
+                <TextIcon />
+                <div>Text</div>
+              </span>
+              <div className={styles.results}>{record.text}</div>
+            </label>
+            <div className={styles.divider} />
+          </>
+        ) : null}
+
+        {record.code !== undefined ? (
+          <>
+            <label className={styles.label}>
+              <span className={styles.iconLabelWrapper}>
+                <CodeIcon />
+                <div>Code</div>
+              </span>
+
+              <div className={styles.results}>{record.code}</div>
+            </label>
+            <div className={styles.divider} />
+          </>
+        ) : null}
+
+        {record.other !== undefined ? (
+          <label className={styles.label}>
+            <span className={styles.iconLabelWrapper}>
+              <TextIcon />
+              <div>Other</div>
+            </span>
+            <div className={styles.results}>{record.other}</div>
+          </label>
+        ) : null}
+      </div>
     </div>
   );
 };
