@@ -274,24 +274,14 @@ function App() {
             const { domains, images, audio, video, text, code, other } =
               response.urls;
 
-            const turnedOnOptions = Object.entries(configOptions).map((i) =>
-              i[1] === true ? i[0] : null
-            );
-
             setRecord((prevRecord) => ({
               ...prevRecord,
               domains: domains ? domains.length : 0,
-              images: turnedOnOptions.includes("images")
-                ? images.length
-                : undefined,
-              audio: turnedOnOptions.includes("audio")
-                ? audio.length
-                : undefined,
-              video: turnedOnOptions.includes("video")
-                ? video.length
-                : undefined,
-              text: turnedOnOptions.includes("text") ? text.length : undefined,
-              code: turnedOnOptions.includes("code") ? code.length : undefined,
+              images: images ? images.length : 0,
+              audio: audio ? audio.length : 0,
+              video: video ? video.length : 0,
+              text: text ? text.length : 0,
+              code: code ? code.length : 0,
               other: other ? other.length : 0,
             }));
           }

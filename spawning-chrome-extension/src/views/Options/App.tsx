@@ -5,6 +5,8 @@ import "@dotlottie/player-component";
 import "../../global.css";
 import styles from "./OptionsPage.module.scss";
 import SpawningHeaderLogo from "../../assets/icons/SpawningHeaderLogo";
+import SearchLogItem from "../components/SearchLogItem/SearchLogItem";
+import ArrowUpRightIcon from "../../assets/icons/ArrowUpRightIcon";
 
 type Links = {
   images: string[];
@@ -107,6 +109,8 @@ function App() {
     });
   };
 
+  console.log({ urlRecords });
+
   // Render the App component
   return (
     <div className={styles.optionsPageWrapper}>
@@ -187,7 +191,7 @@ function App() {
 
           return (
             <div key={id}>
-              <Record record={recordProps} />
+              <SearchLogItem record={recordProps} />
             </div>
           );
         })}
