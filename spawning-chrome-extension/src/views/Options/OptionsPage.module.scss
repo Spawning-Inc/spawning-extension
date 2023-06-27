@@ -1,0 +1,28 @@
+.optionsPageWrapper {
+  padding: 40px;
+  margin: 0 auto;
+}
+
+.headerWrapper {
+  display: flex;
+  justify-content: center;
+}
+
+.description {
+  font-size: 16px;
+  line-height: 120%;
+
+  a {
+    color: #000;
+    text-decoration: none;
+  }
+}
+
+.searchHistoryContainer {
+  border: 2px solid blue;
+  padding: 40px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  row-gap: 40px;
+  gap: 40px;
+}

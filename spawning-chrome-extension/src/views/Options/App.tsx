@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
 import Record from "../components/Record/Record";
-import "../../App.css";
 import "@dotlottie/player-component";
+import "../../global.css";
+import styles from "./OptionsPage.module.scss";
+import SpawningHeaderLogo from "../../assets/icons/SpawningHeaderLogo";
 
 type Links = {
   images: string[];
@@ -107,70 +109,62 @@ function App() {
 
   // Render the App component
   return (
-    <div id="spawning-admin-panel">
-      <div>
-        <dotlottie-player
-          src="../../assets/lottie/searching.lottie"
-          autoplay
-          loop
-          style={{ height: "50%", width: "50%" }}
-        />
+    <div className={styles.optionsPageWrapper}>
+      <div className={styles.headerWrapper} aria-description="Spawning Logo">
+        <SpawningHeaderLogo />
       </div>
-      <label>
-        <input
-          type="checkbox"
-          id="images"
-          checked={options.images}
-          onChange={handleChange}
-        />
-        Images
-      </label>
-      <br />
-      <label>
-        <input
-          type="checkbox"
-          id="audio"
-          checked={options.audio}
-          onChange={handleChange}
-        />
-        Audio
-      </label>
-      <br />
-      <label>
-        <input
-          type="checkbox"
-          id="video"
-          checked={options.video}
-          onChange={handleChange}
-        />
-        Video
-      </label>
-      <br />
-      <label>
-        <input
-          type="checkbox"
-          id="text"
-          checked={options.text}
-          onChange={handleChange}
-        />
-        Text
-      </label>
-      <br />
-      <label>
-        <input
-          type="checkbox"
-          id="code"
-          checked={options.code}
-          onChange={handleChange}
-        />
-        Code
-      </label>
-      <div id="status">{status}</div>
-      <button id="save" onClick={saveOptions}>
-        Save
-      </button>
 
-      <div id="urlRecords" className="record-container">
+      <div>
+        <h2>Description</h2>
+        <p className={styles.description}>
+          <a href="https://spawning.ai/" target="_blank" rel="noreferrer">
+            Spawning
+          </a>{" "}
+          Chrome Extension searches the current page and returns the amount of
+          media in the plugin. After the search is complete, you can identify
+          whether any of the displayed data - from text to images and other
+          media - has been included in public datasets used to train AI models
+          by clicking &#34;view media&#34;. You can easily configure the
+          extension to focus on specific types of media, ensuring that your
+          search is as broad or as targeted as you need. Furthermore, the
+          Spawning generates a comprehensive data consent report, allowing you
+          to understand in detail the prevalence and use of your data in AI
+          training sets. Explore a new level of data transparency and control at{" "}
+          <a href="https://spawning.ai/" target="_blank" rel="noreferrer">
+            spawning.ai
+          </a>
+          .
+        </p>
+      </div>
+
+      <div>
+        <h2>Change log</h2>
+        <a
+          href="https://github.com/Spawning-Inc/spawning-chrome-extension/tree/main"
+          target="_blank"
+          rel="noreferrer"
+        >
+          Source Code
+        </a>
+        <div>
+          <h3>Version 1.0.0</h3>
+          <div>change notes</div>
+          <div>change notes</div>
+        </div>
+      </div>
+
+      <div>
+        <span>
+          <h2>Search log</h2>
+
+          <button>clear history</button>
+        </span>
+        <p>
+          Search log is only stored locally. Spawning does not store your
+          searches.
+        </p>
+      </div>
+      <div className={styles.searchHistoryContainer}>
         {Object.entries(urlRecords).map(([id, record]) => {
           const recordProps: RecordProps["record"] = [
             "domains",
