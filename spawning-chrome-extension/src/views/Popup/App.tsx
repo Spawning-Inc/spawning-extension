@@ -418,6 +418,37 @@ function App() {
     });
   };
 
+  const renderHeaderText = () => {
+    if (scrapingStarted && !searchComplete) {
+      return (
+        <p className={styles.text}>
+          Hang on! We're currently searching through this site to find any
+          content that lives on this page. Once we get that information, you can
+          check if any of that media is in public data sets used to train AI
+          models.{" "}
+        </p>
+      );
+    }
+
+    if (record && searchComplete) {
+      return (
+        <p className={styles.text}>
+          The following content has been discovered on this page. Would you like
+          to find out if it was included in datasets used to train AI models?
+          Click &#34;View media&#34; to learn more, claim ownership of the
+          content, and remove it from the datasets.
+        </p>
+      );
+    }
+
+    return (
+      <p className={styles.text}>
+        Does this page contain content in public datasets used to train AI
+        models? Click &#34;Inspect&#34; to find out.
+      </p>
+    );
+  };
+
   return (
     <div>
       <body>
@@ -430,10 +461,7 @@ function App() {
           </div>
 
           <div className={styles.contentWrapper}>
-            <p className={styles.text}>
-              Does this page contain content in public datasets used to train AI
-              models? Click &#34;Inspect&#34; to find out.
-            </p>
+            {renderHeaderText()}
             {!scrapingStarted && scriptsActive && (
               <button
                 className={styles.inspectButton}
