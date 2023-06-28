@@ -6,7 +6,6 @@ import "../../global.css";
 import styles from "./OptionsPage.module.scss";
 import SpawningHeaderLogo from "../../assets/icons/SpawningHeaderLogo";
 import SearchLogItem from "../components/SearchLogItem/SearchLogItem";
-import ArrowUpRightIcon from "../../assets/icons/ArrowUpRightIcon";
 import TrashIcon from "../../assets/icons/TrashIcon";
 import Pagination from "@mui/material/Pagination";
 
@@ -46,21 +45,12 @@ type Records = {
   };
 }[];
 
-const ITEMS_PER_PAGE = 5;
+const ITEMS_PER_PAGE = 10;
 
 // Main App component
 function App() {
-  // State variables
-  const [options, setOptions] = useState({
-    images: true,
-    audio: true,
-    video: true,
-    text: true,
-    code: true,
-  });
   const [urlRecords, setUrlRecords] = useState<Records>([]);
   const [urlRecordsToDisplay, setUrlRecordsToDisplay] = useState<Records>([]);
-  const [status, setStatus] = useState("");
   const [page, setPage] = useState(1);
   const [pagination, setPagination] = useState({
     count: 0,
@@ -120,16 +110,6 @@ function App() {
     setUrlRecordsToDisplay(urlRecords.slice(pagination.from, pagination.to));
   }, [pagination]);
 
-  // Function to save options
-  const saveOptions = () => {
-    chrome.storage.sync.set({ ...options }, () => {
-      setStatus("Options saved.");
-      setTimeout(() => {
-        setStatus("");
-      }, 750);
-    });
-  };
-
   const handlePageChange = (
     event: React.ChangeEvent<unknown>,
     page: number
@@ -139,8 +119,6 @@ function App() {
     const to = ITEMS_PER_PAGE * page;
 
     setPage(page);
-    console.log(page);
-    console.log(from, to);
 
     setPagination({ ...pagination, from, to });
   };
@@ -237,11 +215,32 @@ function App() {
         })}
       </div>
 
-      <Pagination
-        page={page}
-        count={Math.ceil(pagination.count / ITEMS_PER_PAGE)}
-        onChange={handlePageChange}
-      />
+      <div className={styles.paginationWrapper}>
+        <Pagination
+          page={page}
+          count={Math.ceil(pagination.count / ITEMS_PER_PAGE)}
+          onChange={handlePageChange}
+        />
+      </div>
+
+      <div className={styles.footer}>
+        <div className={styles.linksWrapper}>
+          <a href="">Terms of service</a>
+          <a
+            href="https://site.spawning.ai/contact"
+            target="_blank"
+            rel="noreferer"
+          >
+            Contact
+          </a>
+        </div>
+        <div
+          className={styles.footerSpawningLogo}
+          aria-description="spawning logo used for footer"
+        >
+          <SpawningHeaderLogo />
+        </div>
+      </div>
     </div>
   );
 }

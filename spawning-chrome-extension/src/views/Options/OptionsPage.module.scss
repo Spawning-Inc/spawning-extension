@@ -64,17 +64,38 @@
 
 .searchHistoryContainer {
   row-gap: 20px;
-  padding: 40px;
   display: grid;
+  padding-bottom: 20px;
   grid-template-columns: repeat(auto-fit, 200px);
   gap: 10px;
+  border-bottom: 1px solid #d1d1d1;
 }
 
-// /* Media query for responsiveness */
-// @media (max-width: 768px) {
-//   .searchHistoryContainer {
-//     // grid-template-columns: repeat(auto-fit, 200px);
-//     row-gap: 20px;
-//     gap: 20px;
-//   }
-// }
+.paginationWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 24px;
+}
+
+.footer {
+  margin-top: 100px;
+}
+
+.linksWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  a {
+    font-size: 20px;
+  }
+}
+
+.footerSpawningLogo {
+  margin-top: 62px;
+  text-align: center;
+  svg {
+    width: 250px;
+  }
+}
