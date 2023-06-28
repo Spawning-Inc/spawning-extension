@@ -8,6 +8,7 @@ import SpawningHeaderLogo from "../../assets/icons/SpawningHeaderLogo";
 import SearchLogItem from "../components/SearchLogItem/SearchLogItem";
 import ArrowUpRightIcon from "../../assets/icons/ArrowUpRightIcon";
 import TrashIcon from "../../assets/icons/TrashIcon";
+import Pagination from "@mui/material/Pagination";
 
 type Links = {
   images: string[];
@@ -35,6 +36,18 @@ type RecordProps = {
   };
 };
 
+type Records = {
+  id: string;
+  record: {
+    links: Links;
+    timestamp: string;
+    currentUrl: string;
+    hibtLink: string;
+  };
+}[];
+
+const ITEMS_PER_PAGE = 5;
+
 // Main App component
 function App() {
   // State variables
@@ -45,16 +58,20 @@ function App() {
     text: true,
     code: true,
   });
-  const [urlRecords, setUrlRecords] = useState<
-    Record<
-      string,
-      { links: Links; timestamp: string; currentUrl: string; hibtLink: string }
-    >
-  >({});
+  const [urlRecords, setUrlRecords] = useState<Records>([]);
+  const [urlRecordsToDisplay, setUrlRecordsToDisplay] = useState<Records>([]);
   const [status, setStatus] = useState("");
+  const [page, setPage] = useState(1);
+  const [pagination, setPagination] = useState({
+    count: 0,
+    from: 0,
+    to: ITEMS_PER_PAGE,
+  });
 
   // Effect to handle fetching URL records and visibility change
   useEffect(() => {
+    // Initial fetch
+
     // Function to fetch URL records
     const fetchUrlRecords = () => {
       chrome.storage.local.get(null, function (items) {
@@ -70,11 +87,18 @@ function App() {
           return acc;
         }, {} as Record<string, { links: Links; timestamp: string; currentUrl: string; hibtLink: string }>);
 
-        setUrlRecords(urlRecords);
+        setPagination({ ...pagination, count: Object.keys(urlRecords).length });
+
+        const transformedUrlRecords = Object.entries(urlRecords).map((i) => ({
+          id: i[0],
+          record: i[1],
+        }));
+
+        setUrlRecords(transformedUrlRecords);
+        setUrlRecordsToDisplay(transformedUrlRecords.slice(0, ITEMS_PER_PAGE));
       });
     };
 
-    // Initial fetch
     fetchUrlRecords();
 
     const handleVisibilityChange = () => {
@@ -92,6 +116,10 @@ function App() {
       document.removeEventListener("visibilitychange", handleVisibilityChange);
   }, []);
 
+  useEffect(() => {
+    setUrlRecordsToDisplay(urlRecords.slice(pagination.from, pagination.to));
+  }, [pagination]);
+
   // Function to save options
   const saveOptions = () => {
     chrome.storage.sync.set({ ...options }, () => {
@@ -102,15 +130,20 @@ function App() {
     });
   };
 
-  // Function to handle checkbox change
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setOptions({
-      ...options,
-      [e.target.id]: e.target.checked,
-    });
-  };
+  const handlePageChange = (
+    event: React.ChangeEvent<unknown>,
+    page: number
+  ) => {
+    event.preventDefault();
+    const from = (page - 1) * ITEMS_PER_PAGE;
+    const to = ITEMS_PER_PAGE * page;
 
-  console.log({ urlRecords });
+    setPage(page);
+    console.log(page);
+    console.log(from, to);
+
+    setPagination({ ...pagination, from, to });
+  };
 
   // Render the App component
   return (
@@ -176,7 +209,7 @@ function App() {
       </div>
 
       <div className={styles.searchHistoryContainer}>
-        {Object.entries(urlRecords).map(([id, record]) => {
+        {urlRecordsToDisplay.map(({ id, record }) => {
           const recordProps: RecordProps["record"] = [
             "domains",
             "images",
@@ -203,6 +236,12 @@ function App() {
           );
         })}
       </div>
+
+      <Pagination
+        page={page}
+        count={Math.ceil(pagination.count / ITEMS_PER_PAGE)}
+        onChange={handlePageChange}
+      />
     </div>
   );
 }

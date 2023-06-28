@@ -29,7 +29,6 @@ type SearchLogItemProps = {
 // Create the Record component
 const SearchLogItem: React.FC<SearchLogItemProps> = ({ record }) => {
   const [faviconUrl, setFaviconUrl] = useState("");
-  console.log({ faviconUrl });
 
   // Function to format the URL
   const formatUrl = (url: string | undefined) => {

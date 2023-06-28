@@ -161,11 +161,14 @@ function App() {
             tabs[0].id,
             { message: "start_scraping", tabId: tabs[0].id },
             (response) => {
+              console.log(response);
               console.log(response.message);
               if (chrome.runtime.lastError) {
                 console.error(chrome.runtime.lastError);
                 reject(chrome.runtime.lastError);
               } else if (response) {
+                console.log(response);
+
                 console.log(response.message);
                 setScrapeActive(true);
                 resolve(response);
