@@ -123,6 +123,8 @@ function App() {
     setPagination({ ...pagination, from, to });
   };
 
+  const changeLog = chrome.runtime.getManifest();
+
   // Render the App component
   return (
     <div className={styles.optionsPageWrapper}>
@@ -164,9 +166,9 @@ function App() {
             Source Code
           </a>
           <div>
-            <h3>Version 1.0.0</h3>
-            <div>change notes</div>
-            <div>change notes</div>
+            <h3>
+              Version: {changeLog.version} - {changeLog.description}
+            </h3>
           </div>
         </div>
 
