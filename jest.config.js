@@ -6,7 +6,7 @@ module.exports = {
   },
   globals: {
     "ts-jest": {
-      tsconfig: "spawning-chrome-extension/tsconfig.json",
+      tsconfig: "spawning-extension/tsconfig.json",
     },
   },
   testRegex: "(/__tests__/.*|(\\.|/)(test|spec))\\.(js|ts)$",
