@@ -269,8 +269,7 @@ function App() {
           </span>
           <p>
             Your results are private and encrypted, and permanently deleted when
-            the search logs cleared. Spawning does not store and cannot access
-            your logs.
+            the search logs cleared. Spawning cannot access your logs.
           </p>
         </div>
       </div>
