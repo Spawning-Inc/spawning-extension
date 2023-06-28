@@ -1,0 +1,111 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  a {
+    color: #000;
+    font-size: 14px;
+  }
+}
+
+.urlCardWrapper {
+  border-radius: 12px;
+  border: 1px solid var(--core-black-3, #bababa);
+  background: var(--core-black-0, #fff);
+  padding: 8px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+
+  .faviconWrapper {
+    padding: 7px;
+    border-radius: 100%;
+    background-color: #efefef;
+    display: flex;
+  }
+}
+
+.urlDateWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.recordCardWrapper {
+  padding: 16px 24px;
+  border: 1px solid #eaecf0;
+  border-radius: 8px;
+}
+
+.recordCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.reportLink {
+  position: absolute;
+  padding-left: 180px;
+  padding-top: 180px;
+  font-size: 28px;
+  color: #6f80ff;
+}
+
+.label {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.iconLabelWrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+
+  svg {
+    width: 30px;
+    height: 30px;
+  }
+}
+
+.divider {
+  height: 1px;
+  background-color: #eaecf0;
+  padding: 0 24px;
+  width: 100%;
+}
+
+.results {
+  font-size: 16px;
+}
+
+.viewResultButton {
+  background-color: #3f55ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #efefef;
+  padding: 12px 8px;
+  border-radius: 12px;
+  border: 1px solid #bababa;
+  font-size: 16px;
+  width: 100%;
+
+  &:hover {
+    cursor: pointer;
+    background-color: rgba(63, 85, 255, 0.8);
+  }
+}
+
+/* Media query for responsiveness */
+@media (max-width: 768px) {
+  .recordCard {
+    width: 100%;
+  }
+}

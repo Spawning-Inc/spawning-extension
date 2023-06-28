@@ -1,8 +1,15 @@
 import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
-import Record from "../components/Record/Record";
-import "../../App.css";
+import Pagination from "@mui/material/Pagination";
+
 import "@dotlottie/player-component";
+import Record from "../components/Record/Record";
+import SearchLogItem from "../components/SearchLogItem/SearchLogItem";
+import SpawningHeaderLogo from "../../assets/icons/SpawningHeaderLogo";
+import TrashIcon from "../../assets/icons/TrashIcon";
+
+import styles from "./OptionsPage.module.scss";
+import "../../global.css";
 
 type Links = {
   images: string[];
@@ -30,23 +37,28 @@ type RecordProps = {
   };
 };
 
+type Records = {
+  id: string;
+  record: {
+    links: Links;
+    timestamp: string;
+    currentUrl: string;
+    hibtLink: string;
+  };
+}[];
+
+const ITEMS_PER_PAGE = 10;
+
 // Main App component
 function App() {
-  // State variables
-  const [options, setOptions] = useState({
-    images: true,
-    audio: true,
-    video: true,
-    text: true,
-    code: true,
+  const [urlRecords, setUrlRecords] = useState<Records>([]);
+  const [urlRecordsToDisplay, setUrlRecordsToDisplay] = useState<Records>([]);
+  const [page, setPage] = useState(1);
+  const [pagination, setPagination] = useState({
+    count: 0,
+    from: 0,
+    to: ITEMS_PER_PAGE,
   });
-  const [urlRecords, setUrlRecords] = useState<
-    Record<
-      string,
-      { links: Links; timestamp: string; currentUrl: string; hibtLink: string }
-    >
-  >({});
-  const [status, setStatus] = useState("");
 
   // Effect to handle fetching URL records and visibility change
   useEffect(() => {
@@ -65,11 +77,18 @@ function App() {
           return acc;
         }, {} as Record<string, { links: Links; timestamp: string; currentUrl: string; hibtLink: string }>);
 
-        setUrlRecords(urlRecords);
+        setPagination({ ...pagination, count: Object.keys(urlRecords).length });
+
+        const transformedUrlRecords = Object.entries(urlRecords).map((i) => ({
+          id: i[0],
+          record: i[1],
+        }));
+
+        setUrlRecords(transformedUrlRecords);
+        setUrlRecordsToDisplay(transformedUrlRecords.slice(0, ITEMS_PER_PAGE));
       });
     };
 
-    // Initial fetch
     fetchUrlRecords();
 
     const handleVisibilityChange = () => {
@@ -87,91 +106,90 @@ function App() {
       document.removeEventListener("visibilitychange", handleVisibilityChange);
   }, []);
 
-  // Function to save options
-  const saveOptions = () => {
-    chrome.storage.sync.set({ ...options }, () => {
-      setStatus("Options saved.");
-      setTimeout(() => {
-        setStatus("");
-      }, 750);
-    });
+  useEffect(() => {
+    setUrlRecordsToDisplay(urlRecords.slice(pagination.from, pagination.to));
+  }, [pagination]);
+
+  const handlePageChange = (
+    event: React.ChangeEvent<unknown>,
+    page: number
+  ) => {
+    event.preventDefault();
+    const from = (page - 1) * ITEMS_PER_PAGE;
+    const to = ITEMS_PER_PAGE * page;
+
+    setPage(page);
+
+    setPagination({ ...pagination, from, to });
   };
 
-  // Function to handle checkbox change
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setOptions({
-      ...options,
-      [e.target.id]: e.target.checked,
-    });
-  };
+  const changeLog = chrome.runtime.getManifest();
 
   // Render the App component
   return (
-    <div id="spawning-admin-panel">
-      <div>
-        <dotlottie-player
-          src="../../assets/lottie/searching.lottie"
-          autoplay
-          loop
-          style={{ height: "50%", width: "50%" }}
-        />
+    <div className={styles.optionsPageWrapper}>
+      <div className={styles.headerWrapper} aria-description="Spawning Logo">
+        <SpawningHeaderLogo />
       </div>
-      <label>
-        <input
-          type="checkbox"
-          id="images"
-          checked={options.images}
-          onChange={handleChange}
-        />
-        Images
-      </label>
-      <br />
-      <label>
-        <input
-          type="checkbox"
-          id="audio"
-          checked={options.audio}
-          onChange={handleChange}
-        />
-        Audio
-      </label>
-      <br />
-      <label>
-        <input
-          type="checkbox"
-          id="video"
-          checked={options.video}
-          onChange={handleChange}
-        />
-        Video
-      </label>
-      <br />
-      <label>
-        <input
-          type="checkbox"
-          id="text"
-          checked={options.text}
-          onChange={handleChange}
-        />
-        Text
-      </label>
-      <br />
-      <label>
-        <input
-          type="checkbox"
-          id="code"
-          checked={options.code}
-          onChange={handleChange}
-        />
-        Code
-      </label>
-      <div id="status">{status}</div>
-      <button id="save" onClick={saveOptions}>
-        Save
-      </button>
+      <div className={styles.upperPartWrapper}>
+        <div>
+          <h2>Description</h2>
+          <p className={styles.description}>
+            <a href="https://spawning.ai/" target="_blank" rel="noreferrer">
+              Spawning
+            </a>{" "}
+            Chrome Extension searches the current page and returns the amount of
+            media in the plugin. After the search is complete, you can identify
+            whether any of the displayed data - from text to images and other
+            media - has been included in public datasets used to train AI models
+            by clicking &#34;view media&#34;. You can easily configure the
+            extension to focus on specific types of media, ensuring that your
+            search is as broad or as targeted as you need. Furthermore, the
+            Spawning generates a comprehensive data consent report, allowing you
+            to understand in detail the prevalence and use of your data in AI
+            training sets. Explore a new level of data transparency and control
+            at{" "}
+            <a href="https://spawning.ai/" target="_blank" rel="noreferrer">
+              spawning.ai
+            </a>
+            .
+          </p>
+        </div>
 
-      <div id="urlRecords" className="record-container">
-        {Object.entries(urlRecords).map(([id, record]) => {
+        <div>
+          <h2>Change log</h2>
+          <a
+            href="https://github.com/Spawning-Inc/spawning-chrome-extension/tree/main"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Source Code
+          </a>
+          <div>
+            <h3>
+              Version: {changeLog.version} - {changeLog.description}
+            </h3>
+          </div>
+        </div>
+
+        <div>
+          <span className={styles.searchLogHeader}>
+            <h2>Search log</h2>
+
+            <button className={styles.clearSearchHistoryButton}>
+              clear history
+              <TrashIcon />
+            </button>
+          </span>
+          <p>
+            Search log is only stored locally. Spawning does not store your
+            searches.
+          </p>
+        </div>
+      </div>
+
+      <div className={styles.searchHistoryContainer}>
+        {urlRecordsToDisplay.map(({ id, record }) => {
           const recordProps: RecordProps["record"] = [
             "domains",
             "images",
@@ -193,10 +211,37 @@ function App() {
 
           return (
             <div key={id}>
-              <Record record={recordProps} />
+              <SearchLogItem record={recordProps} />
             </div>
           );
         })}
+      </div>
+
+      <div className={styles.paginationWrapper}>
+        <Pagination
+          page={page}
+          count={Math.ceil(pagination.count / ITEMS_PER_PAGE)}
+          onChange={handlePageChange}
+        />
+      </div>
+
+      <div className={styles.footer}>
+        <div className={styles.linksWrapper}>
+          <a href="">Terms of service</a>
+          <a
+            href="https://site.spawning.ai/contact"
+            target="_blank"
+            rel="noreferer"
+          >
+            Contact
+          </a>
+        </div>
+        <div
+          className={styles.footerSpawningLogo}
+          aria-description="spawning logo used for footer"
+        >
+          <SpawningHeaderLogo />
+        </div>
       </div>
     </div>
   );

@@ -2,17 +2,18 @@ import React, { useEffect, useRef, useState } from "react";
 import ReactDOM from "react-dom";
 import axios from "axios";
 import { BsFillFileTextFill, BsInfoCircle } from "react-icons/bs";
-import StatusMessage from "../components/StatusMessage";
 import CryptoJS from "crypto-js";
 import { v4 as uuidv4 } from "uuid";
+
+import Config from "../components/Config/Config";
+import Record from "../components/Record/Record";
+
 import ConfigureIcon from "../../assets/icons/ConfigureIcon";
 import SearchIcon from "../../assets/icons/SearchIcon";
+import ArrowUpRightIcon from "../../assets/icons/ArrowUpRightIcon";
 import "@dotlottie/player-component";
 
 import styles from "./popupApp.module.scss";
-import Config from "../components/Config/Config";
-import Record from "../components/Record/Record";
-import ArrowUpRightIcon from "../../assets/icons/ArrowUpRightIcon";
 
 type Config = {
   images: boolean;
@@ -35,10 +36,19 @@ function App() {
   const fetchIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const retryCount = useRef(0);
 
-  const [savedConfigOptions, setSavedConfigOptions] = useState<any>();
+  const [savedConfigOptions, setSavedConfigOptions] = useState<
+    Config | undefined
+  >();
 
-  const [configOptions, setConfigOptions] =
-    useState<Config>(savedConfigOptions);
+  const [configOptions, setConfigOptions] = useState<Config>(
+    savedConfigOptions || {
+      images: true,
+      audio: true,
+      video: true,
+      text: true,
+      code: true,
+    }
+  );
 
   // Interface for Links
   interface Links {
@@ -81,7 +91,7 @@ function App() {
   useEffect(() => {
     const handleConfigDefaultValues = async () => {
       await chrome.storage.sync.get(null, (result) => {
-        setSavedConfigOptions(result);
+        setSavedConfigOptions(result as Config);
       });
     };
 
@@ -89,12 +99,20 @@ function App() {
   }, []);
 
   useEffect(() => {
-    setConfigOptions(savedConfigOptions);
+    setConfigOptions(
+      savedConfigOptions || {
+        images: true,
+        audio: true,
+        video: true,
+        text: true,
+        code: true,
+      }
+    );
   }, [savedConfigOptions]);
 
   // Function to get the observer state from the active tab
   const getObserverState = () => {
-    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       if (tabs[0] && tabs[0].id) {
         chrome.runtime.sendMessage(
           { message: "get_observer_state", tabId: tabs[0].id },
@@ -127,15 +145,6 @@ function App() {
     }
   }, [observerActive]);
 
-  // Function to send a message to the active tab
-  const sendMessageToActiveTab = (message: any) => {
-    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-      if (tabs[0] && tabs[0].id) {
-        chrome.tabs.sendMessage(tabs[0].id, { message, tabId: tabs[0].id });
-      }
-    });
-  };
-
   // Function to handle options button click
   const handleOptionsClick = () => {
     if (chrome.runtime.openOptionsPage) {
@@ -143,11 +152,6 @@ function App() {
     } else {
       window.open(chrome.runtime.getURL("../js/options.html"));
     }
-  };
-
-  // Function to handle button click
-  const handleClick = () => {
-    console.log("Button clicked");
   };
 
   // Function to handle scrape button click
@@ -161,11 +165,13 @@ function App() {
             tabs[0].id,
             { message: "start_scraping", tabId: tabs[0].id },
             (response) => {
+              console.log(response);
               console.log(response.message);
               if (chrome.runtime.lastError) {
                 console.error(chrome.runtime.lastError);
                 reject(chrome.runtime.lastError);
               } else if (response) {
+                console.log(response);
                 console.log(response.message);
                 setScrapeActive(true);
                 resolve(response);
@@ -179,7 +185,6 @@ function App() {
 
   // Function to create a link element with the given links
   const createLink = async (links: Links) => {
-    // Create a new anchor element
     const a = document.createElement("a");
 
     const newSalt = uuidv4(); // Generates a random UUID
@@ -187,6 +192,7 @@ function App() {
     const encrypted = urls.map((url) =>
       CryptoJS.AES.encrypt(url, newSalt).toString()
     );
+
     // Send a POST request to the API
     try {
       const response = await axios.post(
@@ -205,7 +211,6 @@ function App() {
       const { id } = response.data;
 
       const hibtLink = `https://patrick-materialize.spawning-have-i-been-trained.pages.dev/?materialize=${id}&salt=${newSalt}`;
-      console.log(hibtLink);
 
       a.href = hibtLink;
       a.target = "_blank";
@@ -236,9 +241,9 @@ function App() {
         // Set record id, url, and timestamp
         setRecord((prevRecord) => ({
           ...prevRecord,
-          id: id || undefined, // Assign undefined if id is null
-          url: currentUrl || undefined, // Assign undefined if currentUrl is null
-          timestamp: timestamp || undefined, // Assign undefined if readableTimestamp is null
+          id: id || undefined,
+          url: currentUrl || undefined,
+          timestamp: timestamp || undefined,
           hibtLink: hibtLink || undefined,
         }));
       });
@@ -274,24 +279,14 @@ function App() {
             const { domains, images, audio, video, text, code, other } =
               response.urls;
 
-            const turnedOnOptions = Object.entries(configOptions).map((i) =>
-              i[1] === true ? i[0] : null
-            );
-
             setRecord((prevRecord) => ({
               ...prevRecord,
               domains: domains ? domains.length : 0,
-              images: turnedOnOptions.includes("images")
-                ? images.length
-                : undefined,
-              audio: turnedOnOptions.includes("audio")
-                ? audio.length
-                : undefined,
-              video: turnedOnOptions.includes("video")
-                ? video.length
-                : undefined,
-              text: turnedOnOptions.includes("text") ? text.length : undefined,
-              code: turnedOnOptions.includes("code") ? code.length : undefined,
+              images: images ? images.length : 0,
+              audio: audio ? audio.length : 0,
+              video: video ? video.length : 0,
+              text: text ? text.length : 0,
+              code: code ? code.length : 0,
               other: other ? other.length : 0,
             }));
           }
@@ -425,6 +420,37 @@ function App() {
     });
   };
 
+  const renderHeaderText = () => {
+    if (scrapingStarted && !searchComplete) {
+      return (
+        <p className={styles.text}>
+          Hang on! We're currently searching through this site to find any
+          content that lives on this page. Once we get that information, you can
+          check if any of that media is in public data sets used to train AI
+          models.{" "}
+        </p>
+      );
+    }
+
+    if (record && searchComplete) {
+      return (
+        <p className={styles.text}>
+          The following content has been discovered on this page. Would you like
+          to find out if it was included in datasets used to train AI models?
+          Click &#34;View media&#34; to learn more, claim ownership of the
+          content, and remove it from the datasets.
+        </p>
+      );
+    }
+
+    return (
+      <p className={styles.text}>
+        Does this page contain content in public datasets used to train AI
+        models? Click &#34;Inspect&#34; to find out.
+      </p>
+    );
+  };
+
   return (
     <div>
       <body>
@@ -437,10 +463,7 @@ function App() {
           </div>
 
           <div className={styles.contentWrapper}>
-            <p className={styles.text}>
-              Does this page contain content in public datasets used to train AI
-              models? Click &#34;Inspect&#34; to find out.
-            </p>
+            {renderHeaderText()}
             {!scrapingStarted && scriptsActive && (
               <button
                 className={styles.inspectButton}

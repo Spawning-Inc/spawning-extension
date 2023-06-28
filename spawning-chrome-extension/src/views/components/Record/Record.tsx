@@ -77,7 +77,7 @@ const Record: React.FC<RecordProps> = ({ record }) => {
   return (
     <div className={styles.recordCardWrapper}>
       <div className={styles.recordCard}>
-        {record.domains !== undefined ? (
+        {record.domains !== 0 ? (
           <>
             <label className={styles.label}>
               <span className={styles.iconLabelWrapper}>
@@ -90,7 +90,7 @@ const Record: React.FC<RecordProps> = ({ record }) => {
           </>
         ) : null}
 
-        {record.images !== undefined ? (
+        {record.images !== 0 ? (
           <>
             <label className={styles.label}>
               <span className={styles.iconLabelWrapper}>
@@ -103,7 +103,7 @@ const Record: React.FC<RecordProps> = ({ record }) => {
           </>
         ) : null}
 
-        {record.audio !== undefined ? (
+        {record.audio !== 0 ? (
           <>
             <label className={styles.label}>
               <span className={styles.iconLabelWrapper}>
@@ -116,7 +116,7 @@ const Record: React.FC<RecordProps> = ({ record }) => {
           </>
         ) : null}
 
-        {record.video !== undefined ? (
+        {record.video !== 0 ? (
           <>
             <label className={styles.label}>
               <span className={styles.iconLabelWrapper}>
@@ -129,7 +129,7 @@ const Record: React.FC<RecordProps> = ({ record }) => {
           </>
         ) : null}
 
-        {record.text !== undefined ? (
+        {record.text !== 0 ? (
           <>
             <label className={styles.label}>
               <span className={styles.iconLabelWrapper}>
@@ -142,7 +142,7 @@ const Record: React.FC<RecordProps> = ({ record }) => {
           </>
         ) : null}
 
-        {record.code !== undefined ? (
+        {record.code !== 0 ? (
           <>
             <label className={styles.label}>
               <span className={styles.iconLabelWrapper}>
@@ -156,7 +156,7 @@ const Record: React.FC<RecordProps> = ({ record }) => {
           </>
         ) : null}
 
-        {record.other !== undefined ? (
+        {record.other !== 0 ? (
           <label className={styles.label}>
             <span className={styles.iconLabelWrapper}>
               <TextIcon />
