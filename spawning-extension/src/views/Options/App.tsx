@@ -221,7 +221,7 @@ function App() {
             <a href="https://spawning.ai/" target="_blank" rel="noreferrer">
               Spawning
             </a>{" "}
-            Chrome Extension searches the current page and returns the amount of
+            The Extension searches the current page and returns the amount of
             media in the plugin. After the search is complete, you can identify
             whether any of the displayed data - from text to images and other
             media - has been included in public datasets used to train AI models
@@ -242,7 +242,7 @@ function App() {
         <div>
           <h2>Change log</h2>
           <a
-            href="https://github.com/Spawning-Inc/spawning-chrome-extension/tree/main"
+            href="https://github.com/Spawning-Inc/spawning-extension/tree/main"
             target="_blank"
             rel="noreferrer"
           >

@@ -1,5 +1,5 @@
 {
-  "name": "spawning-chrome-extension",
+  "name": "spawning-extension",
   "version": "0.1.0",
   "private": true,
   "dependencies": {

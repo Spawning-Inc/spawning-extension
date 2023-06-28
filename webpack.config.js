@@ -4,10 +4,10 @@ const CopyPlugin = require("copy-webpack-plugin");
 
 const commonConfig = {
   entry: {
-    index: "./spawning-chrome-extension/src/views/popup/App.tsx",
-    background: "./spawning-chrome-extension/src/background.ts",
-    content: "./spawning-chrome-extension/src/content.ts",
-    options: "./spawning-chrome-extension/src/views/options/App.tsx",
+    index: "./spawning-extension/src/views/popup/App.tsx",
+    background: "./spawning-extension/src/background.ts",
+    content: "./spawning-extension/src/content.ts",
+    options: "./spawning-extension/src/views/options/App.tsx",
   },
   mode: "production",
   module: {
@@ -71,10 +71,10 @@ module.exports = [
       new CopyPlugin({
         patterns: [
           { from: "manifests/manifest-chrome.json", to: "../manifest.json" },
-          { from: "spawning-chrome-extension/src/assets", to: "../assets" },
-          { from: "spawning-chrome-extension/src/App.css", to: "../App.css" },
+          { from: "spawning-extension/src/assets", to: "../assets" },
+          { from: "spawning-extension/src/App.css", to: "../App.css" },
           {
-            from: "spawning-chrome-extension/src/App.css",
+            from: "spawning-extension/src/App.css",
             to: "../js/App.css",
           },
         ],
@@ -92,14 +92,14 @@ module.exports = [
       new CopyPlugin({
         patterns: [
           { from: "manifests/manifest-firefox.json", to: "../manifest.json" },
-          { from: "spawning-chrome-extension/src/assets", to: "../assets" },
-          { from: "spawning-chrome-extension/src/App.css", to: "../App.css" },
+          { from: "spawning-extension/src/assets", to: "../assets" },
+          { from: "spawning-extension/src/App.css", to: "../App.css" },
           {
             from: "node_modules/webextension-polyfill/dist/browser-polyfill.js",
             to: "../",
           },
           {
-            from: "spawning-chrome-extension/src/App.css",
+            from: "spawning-extension/src/App.css",
             to: "../js/App.css",
           },
         ],
@@ -117,7 +117,7 @@ function getHtmlPlugins(chunks) {
         filename: `${chunk}.html`,
         template: path.resolve(
           __dirname,
-          "spawning-chrome-extension/src/template.html"
+          "spawning-extension/src/template.html"
         ),
         chunks: [chunk],
       })

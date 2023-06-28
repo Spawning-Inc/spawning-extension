@@ -1,7 +1,7 @@
 {
   "scripts": {
-    "build": "sass sass/App.scss:spawning-chrome-extension/src/App.css --style=compressed && webpack --config webpack.config.js && mkdir -p build/chrome && mkdir -p build/firefox && cd dist/chrome && zip -r ../../build/chrome/chrome.zip . && cd ../firefox && web-ext build --overwrite-dest -a ../../build/firefox",
-    "watch": "sass sass/App.scss:spawning-chrome-extension/src/App.css --style=compressed && webpack -w --config webpack.config.js",
+    "build": "sass sass/App.scss:spawning-extension/src/App.css --style=compressed && webpack --config webpack.config.js && mkdir -p build/chrome && mkdir -p build/firefox && cd dist/chrome && zip -r ../../build/chrome/chrome.zip . && cd ../firefox && web-ext build --overwrite-dest -a ../../build/firefox",
+    "watch": "sass sass/App.scss:spawning-extension/src/App.css --style=compressed && webpack -w --config webpack.config.js",
     "test:puppeteer": "jest puppeteer.test.js"
   },
   "dependencies": {

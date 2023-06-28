@@ -1,2 +1,3 @@
-# spawning-chrome-extension
-Chrome extension by Spawning, Inc.
+# spawning-extension
+
+Browser extension by Spawning, Inc.
