@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
 import Pagination from "@mui/material/Pagination";
+import Snackbar from "@mui/material/Snackbar";
+import Alert from "@mui/material/Alert";
+import { SnackbarCloseReason } from "@mui/material/Snackbar";
 
 import "@dotlottie/player-component";
 import Record from "../components/Record/Record";
@@ -25,6 +28,7 @@ type RecordProps = {
   record: {
     id?: string;
     url?: string;
+    title?: string;
     timestamp?: string;
     hibtLink?: string;
     domains: number;
@@ -43,6 +47,7 @@ type Records = {
     links: Links;
     timestamp: string;
     currentUrl: string;
+    currentTitle: string;
     hibtLink: string;
   };
 }[];
@@ -54,6 +59,7 @@ function App() {
   const [urlRecords, setUrlRecords] = useState<Records>([]);
   const [urlRecordsToDisplay, setUrlRecordsToDisplay] = useState<Records>([]);
   const [page, setPage] = useState(1);
+  const [open, setOpen] = useState(false);
   const [pagination, setPagination] = useState({
     count: 0,
     from: 0,
@@ -71,11 +77,12 @@ function App() {
               links: Links;
               timestamp: string;
               currentUrl: string;
+              currentTitle: string;
               hibtLink: string;
             };
           }
           return acc;
-        }, {} as Record<string, { links: Links; timestamp: string; currentUrl: string; hibtLink: string }>);
+        }, {} as Record<string, { links: Links; timestamp: string; currentUrl: string; currentTitle: string; hibtLink: string }>);
 
         setPagination({ ...pagination, count: Object.keys(urlRecords).length });
 
@@ -125,9 +132,85 @@ function App() {
 
   const changeLog = chrome.runtime.getManifest();
 
+  const handleClearHistory = async () => {
+    try {
+      for (let urlRecord of urlRecords) {
+        const response = await fetch(
+          `https://hibt-passthrough.spawningaiapi.com/api/v1/materialize/urls?id=${urlRecord.id}`,
+          {
+            method: "DELETE",
+          }
+        );
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+      }
+      // All requests were successful, clear urlRecords state
+      setUrlRecords([]);
+      setUrlRecordsToDisplay([]);
+
+      // Clear chrome local storage
+      chrome.storage.local.clear(function () {
+        var error = chrome.runtime.lastError;
+        if (error) {
+          console.error(error);
+        }
+      });
+
+      // Reset pagination
+      setPagination({ count: 0, from: 0, to: ITEMS_PER_PAGE });
+
+      // Open Snackbar
+      setOpen(true);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  const handleClose = (
+    event: React.SyntheticEvent<any, Event> | Event,
+    reason: SnackbarCloseReason
+  ) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setOpen(false);
+  };
+
+  const handleAlertClose = (event: React.SyntheticEvent<Element, Event>) => {
+    setOpen(false);
+  };
+
   // Render the App component
   return (
     <div className={styles.optionsPageWrapper}>
+      <Snackbar
+        open={open}
+        autoHideDuration={6000}
+        onClose={handleClose}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        sx={{
+          color: "black",
+          backgroundColor: "white",
+          borderColor: "black",
+          border: "1px solid",
+          borderRadius: "5px",
+        }}
+      >
+        <Alert
+          onClose={handleAlertClose}
+          severity="success"
+          sx={{
+            color: "black",
+            backgroundColor: "white",
+            borderColor: "black",
+            border: "1px solid",
+          }}
+        >
+          All reports have been deleted successfully!
+        </Alert>
+      </Snackbar>
       <div className={styles.headerWrapper} aria-description="Spawning Logo">
         <SpawningHeaderLogo />
       </div>
@@ -176,14 +259,18 @@ function App() {
           <span className={styles.searchLogHeader}>
             <h2>Search log</h2>
 
-            <button className={styles.clearSearchHistoryButton}>
+            <button
+              className={styles.clearSearchHistoryButton}
+              onClick={handleClearHistory}
+            >
               clear history
               <TrashIcon />
             </button>
           </span>
           <p>
-            Search log is only stored locally. Spawning does not store your
-            searches.
+            Your results are private and encrypted, and permanently deleted when
+            the search logs cleared. Spawning does not store and cannot access
+            your logs.
           </p>
         </div>
       </div>
@@ -206,6 +293,7 @@ function App() {
 
           recordProps.id = id;
           recordProps.url = record.currentUrl;
+          recordProps.title = record.currentTitle;
           recordProps.timestamp = record.timestamp;
           recordProps.hibtLink = record.hibtLink;
 
@@ -229,7 +317,7 @@ function App() {
         <div className={styles.linksWrapper}>
           <a href="">Terms of service</a>
           <a
-            href="https://site.spawning.ai/contact"
+            href="https://site.spawning.ai/contact?ctx=browser-extension"
             target="_blank"
             rel="noreferer"
           >

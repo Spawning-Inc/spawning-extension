@@ -13,6 +13,7 @@ type SearchLogItemProps = {
   record: {
     id?: string;
     url?: string;
+    title?: string;
     timestamp?: string;
     hibtLink?: string;
     domains: number;
@@ -47,6 +48,11 @@ const SearchLogItem: React.FC<SearchLogItemProps> = ({ record }) => {
     return timestampDate.toLocaleDateString();
   };
 
+  const formatTitle = (title: string | undefined) => {
+    if (!title) return "";
+    return title.length > 22 ? title.slice(0, 19) + "..." : title;
+  };
+
   // Function to fetch the favicon URL
   const fetchFaviconUrl = () => {
     if (!record.url) return;
@@ -70,7 +76,9 @@ const SearchLogItem: React.FC<SearchLogItemProps> = ({ record }) => {
           </span>
           <div className={styles.urlDateWrapper}>
             <a href={record.url} target="_blank" rel="norefferer">
-              Original site URL
+              {formatTitle(record.title) ||
+                formatTitle(record.url) ||
+                "Page Link"}
             </a>
             <span>{formattedTimestamp()}</span>
           </div>

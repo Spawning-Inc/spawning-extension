@@ -9,6 +9,7 @@
     "@dotlottie/player-component": "^1.4.2",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
+    "@mui/lab": "^5.0.0-alpha.134",
     "@mui/material": "^5.13.6",
     "@types/chrome": "^0.0.237",
     "@types/react": "^18.2.11",

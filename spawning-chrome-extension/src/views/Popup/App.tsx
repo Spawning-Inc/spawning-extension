@@ -65,6 +65,7 @@ function App() {
   const [record, setRecord] = useState<{
     id: any;
     url: string | undefined;
+    title: string | undefined;
     timestamp: string | undefined;
     hibtLink: string | undefined;
     domains: number;
@@ -77,6 +78,7 @@ function App() {
   }>({
     id: undefined,
     url: undefined,
+    title: undefined,
     timestamp: undefined,
     hibtLink: undefined,
     domains: 0,
@@ -222,6 +224,7 @@ function App() {
       // Get the current tab's URL
       chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
         const currentUrl = tabs[0]?.url || "N/A";
+        const currentTitle = tabs[0]?.title || "N/A";
 
         // Save the data to chrome storage
         chrome.storage.local.set(
@@ -230,6 +233,7 @@ function App() {
               links,
               timestamp,
               currentUrl,
+              currentTitle,
               hibtLink,
             },
           },
@@ -243,6 +247,7 @@ function App() {
           ...prevRecord,
           id: id || undefined,
           url: currentUrl || undefined,
+          title: currentTitle || undefined,
           timestamp: timestamp || undefined,
           hibtLink: hibtLink || undefined,
         }));
