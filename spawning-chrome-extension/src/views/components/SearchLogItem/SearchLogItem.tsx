@@ -1,4 +1,3 @@
-// Import necessary modules and components
 import React, { useEffect, useState } from "react";
 
 import styles from "./SearchLogItem.module.scss";
@@ -29,19 +28,6 @@ type SearchLogItemProps = {
 // Create the Record component
 const SearchLogItem: React.FC<SearchLogItemProps> = ({ record }) => {
   const [faviconUrl, setFaviconUrl] = useState("");
-
-  // Function to format the URL
-  const formatUrl = (url: string | undefined) => {
-    if (!url) return "";
-
-    let formattedUrl = url.replace(/(https?:\/\/)?(www\.)?/, "");
-
-    if (formattedUrl.length > 25) {
-      formattedUrl = formattedUrl.slice(0, 25) + "...";
-    }
-
-    return formattedUrl;
-  };
 
   // Function to format the timestamp
   const formattedTimestamp = () => {
@@ -195,5 +181,4 @@ const SearchLogItem: React.FC<SearchLogItemProps> = ({ record }) => {
   );
 };
 
-// Export the SearchLogItem component
 export default SearchLogItem;

@@ -2,17 +2,18 @@ import React, { useEffect, useRef, useState } from "react";
 import ReactDOM from "react-dom";
 import axios from "axios";
 import { BsFillFileTextFill, BsInfoCircle } from "react-icons/bs";
-import StatusMessage from "../components/StatusMessage";
 import CryptoJS from "crypto-js";
 import { v4 as uuidv4 } from "uuid";
+
+import Config from "../components/Config/Config";
+import Record from "../components/Record/Record";
+
 import ConfigureIcon from "../../assets/icons/ConfigureIcon";
 import SearchIcon from "../../assets/icons/SearchIcon";
+import ArrowUpRightIcon from "../../assets/icons/ArrowUpRightIcon";
 import "@dotlottie/player-component";
 
 import styles from "./popupApp.module.scss";
-import Config from "../components/Config/Config";
-import Record from "../components/Record/Record";
-import ArrowUpRightIcon from "../../assets/icons/ArrowUpRightIcon";
 
 type Config = {
   images: boolean;
@@ -35,10 +36,19 @@ function App() {
   const fetchIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const retryCount = useRef(0);
 
-  const [savedConfigOptions, setSavedConfigOptions] = useState<any>();
+  const [savedConfigOptions, setSavedConfigOptions] = useState<
+    Config | undefined
+  >();
 
-  const [configOptions, setConfigOptions] =
-    useState<Config>(savedConfigOptions);
+  const [configOptions, setConfigOptions] = useState<Config>(
+    savedConfigOptions || {
+      images: true,
+      audio: true,
+      video: true,
+      text: true,
+      code: true,
+    }
+  );
 
   // Interface for Links
   interface Links {
@@ -81,7 +91,7 @@ function App() {
   useEffect(() => {
     const handleConfigDefaultValues = async () => {
       await chrome.storage.sync.get(null, (result) => {
-        setSavedConfigOptions(result);
+        setSavedConfigOptions(result as Config);
       });
     };
 
@@ -89,12 +99,20 @@ function App() {
   }, []);
 
   useEffect(() => {
-    setConfigOptions(savedConfigOptions);
+    setConfigOptions(
+      savedConfigOptions || {
+        images: true,
+        audio: true,
+        video: true,
+        text: true,
+        code: true,
+      }
+    );
   }, [savedConfigOptions]);
 
   // Function to get the observer state from the active tab
   const getObserverState = () => {
-    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       if (tabs[0] && tabs[0].id) {
         chrome.runtime.sendMessage(
           { message: "get_observer_state", tabId: tabs[0].id },
@@ -127,15 +145,6 @@ function App() {
     }
   }, [observerActive]);
 
-  // Function to send a message to the active tab
-  const sendMessageToActiveTab = (message: any) => {
-    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-      if (tabs[0] && tabs[0].id) {
-        chrome.tabs.sendMessage(tabs[0].id, { message, tabId: tabs[0].id });
-      }
-    });
-  };
-
   // Function to handle options button click
   const handleOptionsClick = () => {
     if (chrome.runtime.openOptionsPage) {
@@ -143,11 +152,6 @@ function App() {
     } else {
       window.open(chrome.runtime.getURL("../js/options.html"));
     }
-  };
-
-  // Function to handle button click
-  const handleClick = () => {
-    console.log("Button clicked");
   };
 
   // Function to handle scrape button click
@@ -168,7 +172,6 @@ function App() {
                 reject(chrome.runtime.lastError);
               } else if (response) {
                 console.log(response);
-
                 console.log(response.message);
                 setScrapeActive(true);
                 resolve(response);
@@ -182,7 +185,6 @@ function App() {
 
   // Function to create a link element with the given links
   const createLink = async (links: Links) => {
-    // Create a new anchor element
     const a = document.createElement("a");
 
     const newSalt = uuidv4(); // Generates a random UUID
@@ -190,6 +192,7 @@ function App() {
     const encrypted = urls.map((url) =>
       CryptoJS.AES.encrypt(url, newSalt).toString()
     );
+
     // Send a POST request to the API
     try {
       const response = await axios.post(
@@ -208,7 +211,6 @@ function App() {
       const { id } = response.data;
 
       const hibtLink = `https://patrick-materialize.spawning-have-i-been-trained.pages.dev/?materialize=${id}&salt=${newSalt}`;
-      console.log(hibtLink);
 
       a.href = hibtLink;
       a.target = "_blank";
@@ -239,9 +241,9 @@ function App() {
         // Set record id, url, and timestamp
         setRecord((prevRecord) => ({
           ...prevRecord,
-          id: id || undefined, // Assign undefined if id is null
-          url: currentUrl || undefined, // Assign undefined if currentUrl is null
-          timestamp: timestamp || undefined, // Assign undefined if readableTimestamp is null
+          id: id || undefined,
+          url: currentUrl || undefined,
+          timestamp: timestamp || undefined,
           hibtLink: hibtLink || undefined,
         }));
       });

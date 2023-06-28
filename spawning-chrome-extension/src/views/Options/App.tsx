@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
-import Record from "../components/Record/Record";
-import "@dotlottie/player-component";
-import "../../global.css";
-import styles from "./OptionsPage.module.scss";
-import SpawningHeaderLogo from "../../assets/icons/SpawningHeaderLogo";
-import SearchLogItem from "../components/SearchLogItem/SearchLogItem";
-import TrashIcon from "../../assets/icons/TrashIcon";
 import Pagination from "@mui/material/Pagination";
+
+import "@dotlottie/player-component";
+import Record from "../components/Record/Record";
+import SearchLogItem from "../components/SearchLogItem/SearchLogItem";
+import SpawningHeaderLogo from "../../assets/icons/SpawningHeaderLogo";
+import TrashIcon from "../../assets/icons/TrashIcon";
+
+import styles from "./OptionsPage.module.scss";
+import "../../global.css";
 
 type Links = {
   images: string[];
@@ -60,8 +62,6 @@ function App() {
 
   // Effect to handle fetching URL records and visibility change
   useEffect(() => {
-    // Initial fetch
-
     // Function to fetch URL records
     const fetchUrlRecords = () => {
       chrome.storage.local.get(null, function (items) {

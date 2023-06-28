@@ -20,7 +20,7 @@ const Toggle: React.FC<ToggleProps> = ({ name, checked, onChange }) => {
         onChange={onChange}
       />
       <label className={styles.toggleSwitchLabel} htmlFor={name}>
-        <span className={styles.toggleSwitchInner}></span>
+        <span className={styles.toggleSwitchInner} />
 
         <span className={styles.toggleSwitchSwitch} />
       </label>
