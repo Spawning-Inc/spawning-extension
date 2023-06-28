@@ -13,6 +13,7 @@ type RecordProps = {
   record: {
     id?: string;
     url?: string;
+    title?: string;
     timestamp?: string;
     hibtLink?: string;
     domains: number;
