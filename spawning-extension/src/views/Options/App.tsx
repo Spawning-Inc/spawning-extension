@@ -187,11 +187,12 @@ function App() {
         <div>
           <h2>Description</h2>
           <p className={styles.description}>
+            The{" "}
             <a href="https://spawning.ai/" target="_blank" rel="noreferrer">
               Spawning
             </a>{" "}
-            The Extension searches the current page and returns the amount of
-            media in the plugin. After the search is complete, you can identify
+            Extension searches the current page and returns the amount of media
+            in the plugin. After the search is complete, you can identify
             whether any of the displayed data - from text to images and other
             media - has been included in public datasets used to train AI models
             by clicking &#34;view media&#34;. You can easily configure the

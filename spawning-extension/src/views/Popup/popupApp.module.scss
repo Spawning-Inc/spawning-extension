@@ -55,6 +55,12 @@
     cursor: pointer;
     background-color: rgba(63, 85, 255, 0.8);
   }
+
+  &:disabled {
+    background-color: #bababa;
+    color: #efefef;
+    cursor: not-allowed;
+  }
 }
 
 .configAndButtonWrapper {

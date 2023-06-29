@@ -121,19 +121,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     }
     tabData[tabId].observerState = false;
     sendResponse({ status: "observer_disconnected" });
-    if (request.tabId !== undefined) {
-      // Send the observer state tab ID to background.js
-      chrome.runtime.sendMessage(
-        { message: "observer_disconnect", tabId: request.tabId },
-        (response) => {
-          if (chrome.runtime.lastError) {
-            // Error occurred, but we're ignoring it.
-          } else {
-            // Handle the response here
-          }
-        }
-      );
-    }
   } else if (request.message === "get_observer_state") {
     if (request.tabId !== undefined) {
       if (isBackgroundDebugMode) {

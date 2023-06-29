@@ -68,12 +68,15 @@ const SearchLogItem: React.FC<SearchLogItemProps> = ({ record }) => {
       </div>
       <button
         className={styles.viewResultButton}
+        disabled={record.images === 0}
         onClick={() => {
-          window.open(record.hibtLink || "");
+          if (record.images > 0) {
+            window.open(record.hibtLink || "");
+          }
         }}
       >
-        View Media
-        <ArrowUpRightIcon />
+        {record.images === 0 ? "No Searchable Media" : "View Media"}
+        {record.images !== 0 && <ArrowUpRightIcon />}
       </button>
       <div className={styles.recordCardWrapper}>
         <div className={styles.recordCard}>
