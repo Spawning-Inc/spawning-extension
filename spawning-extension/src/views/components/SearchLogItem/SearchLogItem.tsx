@@ -8,24 +8,6 @@ import TextIcon from "../../../assets/icons/TextIcon";
 import CodeIcon from "../../../assets/icons/CodeIcon";
 import ArrowUpRightIcon from "../../../assets/icons/ArrowUpRightIcon";
 
-// Define the type for RecordProps
-type SearchLogItemProps = {
-  record: {
-    id?: string;
-    url?: string;
-    title?: string;
-    timestamp?: string;
-    hibtLink?: string;
-    domains: number;
-    images: number;
-    audio: number;
-    video: number;
-    text: number;
-    code: number;
-    other: number;
-  };
-};
-
 // Create the Record component
 const SearchLogItem: React.FC<SearchLogItemProps> = ({ record }) => {
   const [faviconUrl, setFaviconUrl] = useState("");

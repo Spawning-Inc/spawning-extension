@@ -8,72 +8,8 @@ import VideoIcon from "../../../assets/icons/VideoIcon";
 import TextIcon from "../../../assets/icons/TextIcon";
 import CodeIcon from "../../../assets/icons/CodeIcon";
 
-// Define the type for RecordProps
-type RecordProps = {
-  record: {
-    id?: string;
-    url?: string;
-    title?: string;
-    timestamp?: string;
-    hibtLink?: string;
-    domains: number;
-    images: number;
-    audio: number;
-    video: number;
-    text: number;
-    code: number;
-    other: number;
-  };
-};
-
 // Create the Record component
 const Record: React.FC<RecordProps> = ({ record }) => {
-  const [faviconUrl, setFaviconUrl] = useState("");
-
-  // Function to format the URL
-  const formatUrl = (url: string | undefined) => {
-    if (!url) return "";
-
-    let formattedUrl = url.replace(/(https?:\/\/)?(www\.)?/, "");
-
-    if (formattedUrl.length > 25) {
-      formattedUrl = formattedUrl.slice(0, 25) + "...";
-    }
-
-    return formattedUrl;
-  };
-
-  // Function to format the timestamp
-  const formattedTimestamp = () => {
-    if (!record.timestamp) return "";
-
-    const timestampDate = new Date(record.timestamp);
-    const today = new Date();
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
-
-    if (timestampDate.toDateString() === today.toDateString()) {
-      return "Today";
-    } else if (timestampDate.toDateString() === yesterday.toDateString()) {
-      return "Yesterday";
-    } else {
-      return timestampDate.toLocaleDateString();
-    }
-  };
-
-  // Function to fetch the favicon URL
-  const fetchFaviconUrl = () => {
-    if (!record.url) return;
-
-    const faviconUrl = `https://www.google.com/s2/favicons?domain=${record.url}`;
-    setFaviconUrl(faviconUrl);
-  };
-
-  // Run the fetchFaviconUrl function when the component mounts
-  useEffect(() => {
-    fetchFaviconUrl();
-  }, []);
-
   // Render the Record component
   return (
     <div className={styles.recordCardWrapper}>
