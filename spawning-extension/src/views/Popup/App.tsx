@@ -5,23 +5,24 @@ import { BsFillFileTextFill, BsInfoCircle } from "react-icons/bs";
 import CryptoJS from "crypto-js";
 import { v4 as uuidv4 } from "uuid";
 
-import Config from "../components/Config/Config";
+// import Config from "../components/Config/Config";
 import Record from "../components/Record/Record";
 
-import ConfigureIcon from "../../assets/icons/ConfigureIcon";
+// import ConfigureIcon from "../../assets/icons/ConfigureIcon";
 import SearchIcon from "../../assets/icons/SearchIcon";
 import ArrowUpRightIcon from "../../assets/icons/ArrowUpRightIcon";
 import "@dotlottie/player-component";
 
 import styles from "./popupApp.module.scss";
 
-type Config = {
-  images: boolean;
-  audio: boolean;
-  video: boolean;
-  text: boolean;
-  code: boolean;
-};
+const postUrl = process.env.POPUP_PAGE_POST_URL;
+const hibtUrl = process.env.POPUP_PAGE_HIBT_URL;
+const globalDebug = process.env.GLOBAL_DEBUG;
+let isDebugMode = true;
+
+if (typeof globalDebug !== "undefined") {
+  isDebugMode = globalDebug.toLowerCase() === "true";
+}
 
 function App() {
   // State variables
@@ -30,9 +31,9 @@ function App() {
   const [scrapingStarted, setScrapingStarted] = useState(false);
   const [searchComplete, setSearchComplete] = useState(false);
   const [observerActive, setObserverActive] = useState(true);
-  const [optionsSavedSuccessfully, setOptionsSavedSuccessfully] =
-    useState(false);
-  const [isConfigurationOpen, setIsConfigurationOpen] = useState(false);
+  // const [optionsSavedSuccessfully, setOptionsSavedSuccessfully] =
+  // useState(false);
+  // const [isConfigurationOpen, setIsConfigurationOpen] = useState(false);
   const fetchIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const retryCount = useRef(0);
 
@@ -50,32 +51,7 @@ function App() {
     }
   );
 
-  // Interface for Links
-  interface Links {
-    images: string[];
-    audio: string[];
-    video: string[];
-    text: string[];
-    code: string[];
-    other: string[];
-    domains: string[];
-  }
-
-  // State for record
-  const [record, setRecord] = useState<{
-    id: any;
-    url: string | undefined;
-    title: string | undefined;
-    timestamp: string | undefined;
-    hibtLink: string | undefined;
-    domains: number;
-    images: number;
-    audio: number;
-    video: number;
-    text: number;
-    code: number;
-    other: number;
-  }>({
+  const [record, setRecord] = useState<RecordProps["record"]>({
     id: undefined,
     url: undefined,
     title: undefined,
@@ -124,7 +100,9 @@ function App() {
               return;
             }
             if (response) {
-              console.log("Current observer state:" + response.observerState);
+              if (isDebugMode) {
+                console.log("Current observer state:" + response.observerState);
+              }
               setObserverActive(response.observerState);
             }
           }
@@ -158,7 +136,7 @@ function App() {
 
   // Function to handle scrape button click
   const handleScrapeClick = () => {
-    setIsConfigurationOpen(false);
+    // setIsConfigurationOpen(false);
     setScrapingStarted(true);
     return new Promise((resolve, reject) => {
       chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
@@ -167,14 +145,18 @@ function App() {
             tabs[0].id,
             { message: "start_scraping", tabId: tabs[0].id },
             (response) => {
-              console.log(response);
-              console.log(response.message);
+              if (isDebugMode) {
+                console.log(response);
+                console.log(response.message);
+              }
               if (chrome.runtime.lastError) {
                 console.error(chrome.runtime.lastError);
                 reject(chrome.runtime.lastError);
               } else if (response) {
-                console.log(response);
-                console.log(response.message);
+                if (isDebugMode) {
+                  console.log(response);
+                  console.log(response.message);
+                }
                 setScrapeActive(true);
                 resolve(response);
               }
@@ -195,10 +177,16 @@ function App() {
       CryptoJS.AES.encrypt(url, newSalt).toString()
     );
 
+    if (!postUrl) {
+      throw new Error(
+        "POPUP_PAGE_POST_URL is not defined in environment variables"
+      );
+    }
+
     // Send a POST request to the API
     try {
       const response = await axios.post(
-        "https://hibt-passthrough.spawningaiapi.com/api/v1/materialize/urls/",
+        postUrl,
         {
           urls: encrypted,
         },
@@ -212,7 +200,7 @@ function App() {
       // Extract the id from the response
       const { id } = response.data;
 
-      const hibtLink = `https://patrick-materialize.spawning-have-i-been-trained.pages.dev/?materialize=${id}&salt=${newSalt}`;
+      const hibtLink = `${hibtUrl}/?materialize=${id}&salt=${newSalt}`;
 
       a.href = hibtLink;
       a.target = "_blank";
@@ -238,13 +226,15 @@ function App() {
             },
           },
           function () {
-            console.log(`Urls are saved with id ${id}`);
+            if (isDebugMode) {
+              console.log(`Urls are saved with id ${id}`);
+            }
           }
         );
 
         // Set record id, url, and timestamp
-        setRecord((prevRecord) => ({
-          ...prevRecord,
+        setRecord((prevState) => ({
+          ...prevState,
           id: id || undefined,
           url: currentUrl || undefined,
           title: currentTitle || undefined,
@@ -273,7 +263,9 @@ function App() {
               return;
             }
 
-            console.log("Response:", response); // Log the received response for debugging
+            if (isDebugMode) {
+              console.log("Response:", response); // Log the received response for debugging
+            }
 
             if (!response || !response.urls) {
               // Handle the error appropriately.
@@ -317,7 +309,9 @@ function App() {
                 return;
               }
 
-              console.log("Response:", response);
+              if (isDebugMode) {
+                console.log("Response:", response);
+              }
 
               if (!response || !response.urls) {
                 console.error("Error: Response or response.urls is undefined");
@@ -339,19 +333,24 @@ function App() {
 
   // Function to ping scripts and check if they are active
   const pingScripts = () => {
-    chrome.runtime.sendMessage({ message: "ping" }, (response: any) => {
-      if (chrome.runtime.lastError) {
-        console.error(chrome.runtime.lastError);
-        return;
+    chrome.runtime.sendMessage(
+      { message: "check_background_active" },
+      (response: any) => {
+        if (chrome.runtime.lastError) {
+          console.error(chrome.runtime.lastError);
+          return;
+        }
+        if (response?.message === "background_active") {
+          if (isDebugMode) {
+            console.log("background_active");
+          }
+          setScriptsActive(true);
+        } else {
+          retryCount.current++;
+          setTimeout(pingScripts, 200);
+        }
       }
-      if (response?.message === "background_active") {
-        console.log("Scripts are active");
-        setScriptsActive(true);
-      } else {
-        retryCount.current++;
-        setTimeout(pingScripts, 200);
-      }
-    });
+    );
   };
 
   // Effect hook to check if scripts are active
@@ -367,7 +366,7 @@ function App() {
       fetchIntervalRef.current = setInterval(() => {
         fetchAndDisplayUrls();
         getObserverState();
-      }, 300); // This will execute fetchAndDisplayUrls every 0.5 seconds
+      }, 300);
     } else if (fetchIntervalRef.current) {
       // If observerActive is false, clear the interval
       clearInterval(fetchIntervalRef.current);
@@ -397,33 +396,33 @@ function App() {
     };
   }, []);
 
-  useEffect(() => {
-    if (optionsSavedSuccessfully) {
-      setTimeout(() => {
-        setIsConfigurationOpen(false);
-      }, 2000);
+  // useEffect(() => {
+  //   if (optionsSavedSuccessfully) {
+  //     setTimeout(() => {
+  //       setIsConfigurationOpen(false);
+  //     }, 2000);
 
-      return;
-    }
-  }, [optionsSavedSuccessfully]);
+  //     return;
+  //   }
+  // }, [optionsSavedSuccessfully]);
 
   // Function to handle checkbox change
-  const handleConfigChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setConfigOptions({
-      ...configOptions,
-      [e.target.id]: e.target.checked,
-    });
-  };
+  // const handleConfigChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   setConfigOptions({
+  //     ...configOptions,
+  //     [e.target.id]: e.target.checked,
+  //   });
+  // };
 
-  const saveOptions = () => {
-    chrome.storage.sync.set({ ...configOptions }, () => {
-      setOptionsSavedSuccessfully(true);
+  // const saveOptions = () => {
+  //   chrome.storage.sync.set({ ...configOptions }, () => {
+  //     setOptionsSavedSuccessfully(true);
 
-      setTimeout(() => {
-        setOptionsSavedSuccessfully(false);
-      }, 5000);
-    });
-  };
+  //     setTimeout(() => {
+  //       setOptionsSavedSuccessfully(false);
+  //     }, 5000);
+  //   });
+  // };
 
   const renderHeaderText = () => {
     if (scrapingStarted && !searchComplete) {

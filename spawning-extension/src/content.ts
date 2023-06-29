@@ -1,15 +1,25 @@
-// Declare types and variables
+let mutationTimeout = process.env.CONTENT_MUTATION_TIMEOUT;
+let globalDebug = process.env.GLOBAL_DEBUG;
+let isDebugMode = true;
+let timeoutInMilliseconds: number;
+
+if (typeof globalDebug !== "undefined") {
+  isDebugMode = globalDebug.toLowerCase() === "true";
+}
+
+if (mutationTimeout) {
+  timeoutInMilliseconds = Number(mutationTimeout);
+
+  if (isNaN(timeoutInMilliseconds)) {
+    throw new Error("CONTENT_MUTATION_TIMEOUT should be a number");
+  }
+} else {
+  throw new Error(
+    "CONTENT_MUTATION_TIMEOUT is not defined in environment variables"
+  );
+}
 
 let observerMap = new Map();
-let urls: UrlsType = {
-  images: [],
-  audio: [],
-  video: [],
-  text: [],
-  code: [],
-  other: [],
-  domains: [],
-};
 
 type SettingsType = {
   images?: boolean;
@@ -19,6 +29,24 @@ type SettingsType = {
   code?: boolean;
   [key: string]: any;
 } | null;
+
+let urls: {
+  images: string[];
+  audio: string[];
+  video: string[];
+  text: string[];
+  code: string[];
+  other: string[];
+  domains: string[];
+} = {
+  images: [],
+  audio: [],
+  video: [],
+  text: [],
+  code: [],
+  other: [],
+  domains: [],
+};
 
 let settings: SettingsType = null;
 
@@ -167,7 +195,9 @@ function scrapeUrls(): void {
 
 // Listen for messages from the extension
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  console.log("Received message for tabId:", request.tabId);
+  if (isDebugMode) {
+    console.log("Received message for tabId:", request.tabId);
+  }
 
   let tabId = sender.tab?.id || request.tabId;
 
@@ -242,9 +272,11 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
           message: "observer_disconnect",
           tabId: tabId,
         });
-        console.log("Observer disconnected for tabId:", request.tabId);
-        console.log("Mutation observer disconnected due to inactivity");
-      }, 2000); // Modify time as needed
+
+        if (isDebugMode) {
+          console.log("Observer disconnected for tabId:", request.tabId);
+        }
+      }, timeoutInMilliseconds); // Modify time as needed
     });
 
     // Start observer
@@ -254,14 +286,15 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         childList: true,
         subtree: true,
       });
-      console.log("Mutation observer started for tabId:", request.tabId);
+      if (isDebugMode) {
+        console.log("Mutation observer started for tabId:", request.tabId);
+      }
     };
     startObserver();
 
     // Initialize previousUrlsCount
     let previousUrlsCount = 0;
 
-    // Check every 2 seconds if new URLs are found
     const urlCheckInterval = setInterval(() => {
       const currentUrlsCount = Object.values(urls).reduce(
         (acc, curr) => acc + curr.length,
@@ -275,12 +308,14 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
           message: "observer_disconnect",
           tabId: tabId,
         });
-        console.log("Observer disconnected for tabId:", request.tabId);
+        if (isDebugMode) {
+          console.log("Observer disconnected for tabId:", request.tabId);
+        }
         clearInterval(urlCheckInterval);
       }
 
       previousUrlsCount = currentUrlsCount;
-    }, 1500);
+    }, timeoutInMilliseconds);
 
     // Scrape URLs from the page
     scrapeUrls();

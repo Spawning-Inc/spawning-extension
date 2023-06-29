@@ -1,21 +1,12 @@
 /// <reference types="chrome" />
 
-// Define the tab data structure
-interface TabData {
-  observerState: boolean;
-  urls: UrlsType;
-}
+let searchText = process.env.BACKGROUND_SEARCH_TEXT;
+let backgroundDebug = process.env.GLOBAL_DEBUG;
+let isBackgroundDebugMode = true;
 
-// Define the URL types
-type UrlsType = {
-  images: string[];
-  audio: string[];
-  video: string[];
-  text: string[];
-  code: string[];
-  other: string[];
-  domains: string[];
-};
+if (typeof backgroundDebug !== "undefined") {
+  isBackgroundDebugMode = backgroundDebug.toLowerCase() === "true";
+}
 
 // Initialize the tab data object
 let tabData: Record<number, TabData> = {};
@@ -24,7 +15,7 @@ let tabData: Record<number, TabData> = {};
 chrome.runtime.onInstalled.addListener(() => {
   // Create a context menu item for images
   chrome.contextMenus.create({
-    title: "Image Search HiBT",
+    title: searchText,
     contexts: ["image"],
     id: "contextImage",
   });
@@ -81,9 +72,13 @@ if (typeof chrome.action !== "undefined") {
 }
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  console.log("background.tsx: onMessage: request.message: " + request);
-  if (request.message === "ping") {
-    console.log("got ping dont worry");
+  if (isBackgroundDebugMode) {
+    console.log("background.tsx: onMessage: request.message: " + request);
+  }
+  if (request.message === "check_background_active") {
+    if (isBackgroundDebugMode) {
+      console.log("background_active");
+    }
     sendResponse({ message: "background_active" });
     return true; // will respond asynchronously
   }
@@ -91,7 +86,9 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   let tabId = sender.tab?.id || request.tabId;
   if (!tabId) {
     tabId = request.tabId;
-    console.log("Error: tabId is undefined" + request.message);
+    if (isBackgroundDebugMode) {
+      console.log("Error: tabId is undefined" + request.message);
+    }
     return true;
   }
 
@@ -119,8 +116,9 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     sendResponse({ urls: tabData[tabId].urls });
     return true; // will respond asynchronously
   } else if (request.message === "observer_disconnect") {
-    console.log("DIOSCONNECTED");
-    console.log("observer_disconnect " + tabId);
+    if (isBackgroundDebugMode) {
+      console.log("observer_disconnect " + tabId);
+    }
     tabData[tabId].observerState = false;
     sendResponse({ status: "observer_disconnected" });
     if (request.tabId !== undefined) {
@@ -129,8 +127,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         { message: "observer_disconnect", tabId: request.tabId },
         (response) => {
           if (chrome.runtime.lastError) {
-            console.error(chrome.runtime.lastError);
-            // Handle the error here, e.g., retry sending the message after some time
+            // Error occurred, but we're ignoring it.
           } else {
             // Handle the response here
           }
@@ -139,18 +136,22 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     }
   } else if (request.message === "get_observer_state") {
     if (request.tabId !== undefined) {
-      console.log(
-        "get observer state" +
-          request.tabId +
-          " " +
-          tabData[request.tabId]?.observerState
-      );
+      if (isBackgroundDebugMode) {
+        console.log(
+          "get observer state" +
+            request.tabId +
+            " " +
+            tabData[request.tabId]?.observerState
+        );
+      }
       sendResponse({ observerState: tabData[request.tabId]?.observerState });
     } else {
       console.error("Error: tabId is undefined");
     }
   }
-  console.log(request);
+  if (isBackgroundDebugMode) {
+    console.log(request);
+  }
   sendResponse({ message: "Unrecognized or unprocessable message" });
   return true; // respond asynchronously
 });

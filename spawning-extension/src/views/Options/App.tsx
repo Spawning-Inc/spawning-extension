@@ -14,45 +14,17 @@ import TrashIcon from "../../assets/icons/TrashIcon";
 import styles from "./OptionsPage.module.scss";
 import "../../global.css";
 
-type Links = {
-  images: string[];
-  audio: string[];
-  video: string[];
-  text: string[];
-  code: string[];
-  other: string[];
-  domains: string[];
-};
-
-type RecordProps = {
-  record: {
-    id?: string;
-    url?: string;
-    title?: string;
-    timestamp?: string;
-    hibtLink?: string;
-    domains: number;
-    images: number;
-    audio: number;
-    video: number;
-    text: number;
-    code: number;
-    other: number;
-  };
-};
-
-type Records = {
-  id: string;
-  record: {
-    links: Links;
-    timestamp: string;
-    currentUrl: string;
-    currentTitle: string;
-    hibtLink: string;
-  };
-}[];
-
 const ITEMS_PER_PAGE = 10;
+const deleteRecordUrl = process.env.OPTIONS_PAGE_DELETE_RECORD_URL;
+const gitUrl = process.env.OPTIONS_PAGE_GIT_URL;
+const contactUrl = process.env.OPTIONS_PAGE_CONTACT_URL;
+const tosUrl = process.env.OPTIONS_PAGE_TOS_URL;
+const globalDebug = process.env.GLOBAL_DEBUG;
+let isDebugMode = true;
+
+if (typeof globalDebug !== "undefined") {
+  isDebugMode = globalDebug.toLowerCase() === "true";
+}
 
 // Main App component
 function App() {
@@ -135,12 +107,9 @@ function App() {
   const handleClearHistory = async () => {
     try {
       for (let urlRecord of urlRecords) {
-        const response = await fetch(
-          `https://hibt-passthrough.spawningaiapi.com/api/v1/materialize/urls?id=${urlRecord.id}`,
-          {
-            method: "DELETE",
-          }
-        );
+        const response = await fetch(`${deleteRecordUrl}?id=${urlRecord.id}`, {
+          method: "DELETE",
+        });
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
@@ -241,11 +210,7 @@ function App() {
 
         <div>
           <h2>Change log</h2>
-          <a
-            href="https://github.com/Spawning-Inc/spawning-extension/tree/main"
-            target="_blank"
-            rel="noreferrer"
-          >
+          <a href={gitUrl} target="_blank" rel="noreferrer">
             Source Code
           </a>
           <div>
@@ -314,18 +279,10 @@ function App() {
 
       <div className={styles.footer}>
         <div className={styles.linksWrapper}>
-          <a
-            href="https://site.spawning.ai/terms-of-service?ctx=browser-extension"
-            target="_blank"
-            rel="noreferer"
-          >
+          <a href={tosUrl} target="_blank" rel="noreferer">
             Terms of service
           </a>
-          <a
-            href="https://site.spawning.ai/contact?ctx=browser-extension"
-            target="_blank"
-            rel="noreferer"
-          >
+          <a href={contactUrl} target="_blank" rel="noreferer">
             Contact
           </a>
         </div>

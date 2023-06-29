@@ -1,6 +1,7 @@
 const path = require("path");
 const HTMLPlugin = require("html-webpack-plugin");
 const CopyPlugin = require("copy-webpack-plugin");
+const Dotenv = require("dotenv-webpack");
 
 const commonConfig = {
   entry: {
@@ -68,6 +69,10 @@ module.exports = [
       path: path.join(__dirname, "dist/chrome/js"),
     },
     plugins: [
+      new Dotenv({
+        path: path.resolve(__dirname, ".env"),
+        systemvars: true,
+      }),
       new CopyPlugin({
         patterns: [
           { from: "manifests/manifest-chrome.json", to: "../manifest.json" },
@@ -89,6 +94,10 @@ module.exports = [
       path: path.join(__dirname, "dist/firefox/js"),
     },
     plugins: [
+      new Dotenv({
+        path: path.resolve(__dirname, ".env"),
+        systemvars: true,
+      }),
       new CopyPlugin({
         patterns: [
           { from: "manifests/manifest-firefox.json", to: "../manifest.json" },
