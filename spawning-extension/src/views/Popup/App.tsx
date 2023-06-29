@@ -489,7 +489,7 @@ function App() {
             )}
           </div>
 
-          {!searchComplete && !scrapingStarted && (
+          {/* {!searchComplete && !scrapingStarted && (
             <button
               type="button"
               className={styles.configureButton}
@@ -516,7 +516,7 @@ function App() {
                 </button>
               )}
             </div>
-          ) : null}
+          ) : null} */}
 
           {record && searchComplete ? (
             <div className={styles.recordWrapper}>

@@ -314,7 +314,13 @@ function App() {
 
       <div className={styles.footer}>
         <div className={styles.linksWrapper}>
-          <a href="">Terms of service</a>
+          <a
+            href="https://site.spawning.ai/terms-of-service?ctx=browser-extension"
+            target="_blank"
+            rel="noreferer"
+          >
+            Terms of service
+          </a>
           <a
             href="https://site.spawning.ai/contact?ctx=browser-extension"
             target="_blank"

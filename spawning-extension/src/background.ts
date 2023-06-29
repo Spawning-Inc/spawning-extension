@@ -24,7 +24,7 @@ let tabData: Record<number, TabData> = {};
 chrome.runtime.onInstalled.addListener(() => {
   // Create a context menu item for images
   chrome.contextMenus.create({
-    title: "Reverse Image Search on HiBT",
+    title: "Image Search HiBT",
     contexts: ["image"],
     id: "contextImage",
   });
