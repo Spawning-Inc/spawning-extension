@@ -461,7 +461,11 @@ function App() {
         <div className={styles.wrapper}>
           <div className={styles.header}>
             <img src="../assets/header.svg" alt="icon" width={150} />
-            <button className={styles.infoButton} onClick={handleOptionsClick}>
+            <button
+              id="info-button"
+              className={styles.infoButton}
+              onClick={handleOptionsClick}
+            >
               <BsInfoCircle />
             </button>
           </div>
@@ -470,6 +474,7 @@ function App() {
             {renderHeaderText()}
             {!scrapingStarted && scriptsActive && (
               <button
+                id="start-scraping-button"
                 className={styles.inspectButton}
                 onClick={handleScrapeClick}
               >
@@ -480,6 +485,7 @@ function App() {
 
             {scrapingStarted && !searchComplete && (
               <dotlottie-player
+                id="searching-animation"
                 src="../../assets/lottie/searching.lottie"
                 autoplay
                 loop
@@ -522,6 +528,7 @@ function App() {
               <Record record={record} />
 
               <button
+                id="view-result-button"
                 className={styles.viewResultButton}
                 disabled={record.images === 0}
                 onClick={() => {

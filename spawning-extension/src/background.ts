@@ -1,6 +1,5 @@
-/// <reference types="chrome" />
-
 let searchText = process.env.BACKGROUND_SEARCH_TEXT;
+let searchUrl = process.env.BACKGROUND_SEARCH_URL;
 let backgroundDebug = process.env.GLOBAL_DEBUG;
 let isBackgroundDebugMode = true;
 
@@ -53,7 +52,7 @@ function onClickHandler(
 ): void {
   if (tab && info.menuItemId === "contextImage" && info.mediaType === "image") {
     const imageLink = encodeURIComponent(info.srcUrl as string);
-    const newUrl = `https://haveibeentrained.com?url=${imageLink}`;
+    const newUrl = `${searchUrl}?url=${imageLink}`;
 
     // Create a new tab with the new URL
     chrome.tabs.create({ url: newUrl });

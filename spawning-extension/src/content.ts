@@ -1,15 +1,17 @@
-let mutationTimeout = process.env.CONTENT_MUTATION_TIMEOUT;
-let globalDebug = process.env.GLOBAL_DEBUG;
-let isDebugMode = true;
-let timeoutInMilliseconds: number;
+// Setup: get environment variables and initialize globals
+let mutationTimeout = process.env.CONTENT_MUTATION_TIMEOUT; // Environment variable for mutation observer timeout
+let globalDebug = process.env.GLOBAL_DEBUG; // Environment variable to control debug mode
+let isDebugMode = true; // Default to true, but will be set based on globalDebug
+let timeoutInMilliseconds: number; // Will hold timeout in milliseconds for mutation observer
 
+// Check if debugging is enabled
 if (typeof globalDebug !== "undefined") {
   isDebugMode = globalDebug.toLowerCase() === "true";
 }
 
+// Validate and convert CONTENT_MUTATION_TIMEOUT to number
 if (mutationTimeout) {
   timeoutInMilliseconds = Number(mutationTimeout);
-
   if (isNaN(timeoutInMilliseconds)) {
     throw new Error("CONTENT_MUTATION_TIMEOUT should be a number");
   }
@@ -19,8 +21,10 @@ if (mutationTimeout) {
   );
 }
 
+// Initialize a map to keep track of observers
 let observerMap = new Map();
 
+// Define settings type for managing file types to observe
 type SettingsType = {
   images?: boolean;
   audio?: boolean;
@@ -30,6 +34,7 @@ type SettingsType = {
   [key: string]: any;
 } | null;
 
+// Initialize structure to hold URLs by type
 let urls: {
   images: string[];
   audio: string[];
@@ -48,17 +53,18 @@ let urls: {
   domains: [],
 };
 
+// Initialize settings variable
 let settings: SettingsType = null;
 
 // Get settings from chrome storage
 chrome.storage.sync.get(
   { images: true, audio: true, video: true, text: true, code: true },
   (items: SettingsType) => {
-    settings = items;
+    settings = items; // Update settings with user preference
   }
 );
 
-// Classify and store URLs based on their file type
+// Function to classify and store URL based on file type
 function classifyUrl(url: string): void {
   url = url.split("?")[0]; // Remove query string
   if (
@@ -110,7 +116,7 @@ function classifyUrl(url: string): void {
   chrome.runtime.sendMessage({ message: "page_links", urls: urls });
 }
 
-// Extract domain from a URL
+// Function to extract domain from a URL
 function extractDomain(url: string): string {
   let domain;
   // find & remove protocol (http, ftp, etc.) and get domain
@@ -124,7 +130,7 @@ function extractDomain(url: string): string {
   return domain;
 }
 
-// Scrape URLs from the page
+// Function to scrape URLs from the page
 function scrapeUrls(): void {
   // Get all img, video, audio, a, link, script, iframe, and object elements
   const imgElements = Array.from(document.getElementsByTagName("img"));
@@ -193,7 +199,7 @@ function scrapeUrls(): void {
   }
 }
 
-// Listen for messages from the extension
+// Listener for messages from the extension
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (isDebugMode) {
     console.log("Received message for tabId:", request.tabId);

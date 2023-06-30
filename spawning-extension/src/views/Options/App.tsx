@@ -226,6 +226,7 @@ function App() {
             <h2>Search log</h2>
 
             <button
+              id="clear-search-history-button"
               className={styles.clearSearchHistoryButton}
               onClick={handleClearHistory}
             >
