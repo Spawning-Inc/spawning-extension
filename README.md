@@ -1,6 +1,6 @@
 # Spawning-Extension
 
-This browser extension allows users to scrape data from various websites. It is built using JavaScript and is compatible with both Chrome and Firefox browsers.
+The Spawning Extension searches the current page and returns the amount of media in the plugin. After the search is complete, you can identify whether any of the displayed data - from text to images and other media - has been included in public datasets used to train AI models by clicking "view media". You can easily configure the extension to focus on specific types of media, ensuring that your search is as broad or as targeted as you need.
 
 ## Getting Started
 
