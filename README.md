@@ -1,6 +1,6 @@
 # Spawning-Extension
 
-The Spawning Extension searches the current page and returns the amount of media in the plugin. After the search is complete, you can identify whether any of the displayed data - from text to images and other media - has been included in public datasets used to train AI models by clicking "view media". You can easily configure the extension to focus on specific types of media, ensuring that your search is as broad or as targeted as you need.
+The Spawning Extension makes it simple for users to search if their content has been used to train AI models. It works by searching the current page for different types of media (text, images, and other media), displays the results to the user, and allows the user to analyze the media, and related media, in Have I Been Trained (HIBT). The displayed results in HIBT allow users to opt-out the content found via the search results, while also assisting in discovery of other content which may not have been found by the extension. The extension can be easily configured to focus on specific types of media, ensuring your search is as broad, or as targeted, as you need.
 
 ## Getting Started
 
@@ -15,7 +15,7 @@ You will need Node.js and npm installed on your system. You can download Node.js
 Clone the repository to your local machine.
 
 ```bash
-git clone TODO: final repo path
+git clone https://github.com/Spawning-Inc/spawning-extension
 cd spawning-extension
 ```
 
@@ -27,7 +27,7 @@ npm install
 
 ### .env file
 
-For this project, you will need to create a .env file at the root of your project directory. This file will hold all your environment variables. Ensure you add this file to your .gitignore file so that it is not tracked by git.
+For this project, you will need to create a `.env` file at the root of your project directory. This file will hold all your environment variables. An example file is at `.env.example`.
 
 ### Building the Extension
 
@@ -73,7 +73,8 @@ Please read CONTRIBUTING.md for details on our code of conduct, and the process 
 
 ## Authors
 
-- Spawning Inc
+- Patrick Hoepner <patrick@spawning.ai>
+- Annalia DeStefano <annalia@spawning.ai>
 
 ## License
 
