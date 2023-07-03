@@ -1,6 +1,6 @@
 {
   "name": "Spawning",
-  "description": "Search for images on hibt",
+  "description": "The Spawning Extension makes it simple for users to search if their content has been used to train AI models.",
   "version": "1.0.0",
   "manifest_version": 3,
   "icons": {
@@ -9,7 +9,7 @@
     "48": "assets/icons/icon48.png",
     "128": "assets/icons/icon128.png"
   },
-  "permissions": ["contextMenus", "tabs", "activeTab", "scripting", "storage"],
+  "permissions": ["contextMenus", "tabs", "activeTab", "storage"],
   "background": {
     "service_worker": "js/background.js"
   },
