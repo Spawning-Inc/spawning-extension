@@ -1,9 +1,9 @@
 {
   "scripts": {
-    "build": "sass sass/App.scss:spawning-extension/src/App.css && webpack --config webpack.config.js && mkdir -p build/chrome && mkdir -p build/firefox && cd dist/chrome && zip -r ../../build/chrome/chrome.zip . && cd ../firefox && web-ext build --overwrite-dest -a ../../build/firefox",
-    "build-chrome": "sass sass/App.scss:spawning-extension/src/App.css && webpack --config webpack.config.js && mkdir -p build/chrome && cd dist/chrome && zip -r ../../build/chrome/chrome.zip .",
-    "build-firefox": "sass sass/App.scss:spawning-extension/src/App.css && webpack --config webpack.config.js && mkdir -p build/firefox && cd dist/firefox && web-ext build --overwrite-dest -a ../../build/firefox",
-    "watch": "sass sass/App.scss:spawning-extension/src/App.css && webpack -w --config webpack.config.js",
+    "build": "sass sass/App.scss:spawning-extension/src/App.css --style=compressed && webpack --config webpack.config.js && mkdir -p build/chrome && mkdir -p build/firefox && cd dist/chrome && zip -r ../../build/chrome/chrome.zip . && cd ../firefox && web-ext build --overwrite-dest -a ../../build/firefox",
+    "build-chrome": "sass sass/App.scss:spawning-extension/src/App.css --style=compressed && webpack --config webpack.config.js && mkdir -p build/chrome && cd dist/chrome && zip -r ../../build/chrome/chrome.zip .",
+    "build-firefox": "sass sass/App.scss:spawning-extension/src/App.css --style=compressed && webpack --config webpack.config.js && mkdir -p build/firefox && cd dist/firefox && web-ext build --overwrite-dest -a ../../build/firefox",
+    "watch": "sass sass/App.scss:spawning-extension/src/App.css --style=compressed && webpack -w --config webpack.config.js",
     "test:puppeteer": "jest puppeteer.test.js"
   },
   "dependencies": {
