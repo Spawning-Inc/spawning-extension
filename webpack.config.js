@@ -91,6 +91,31 @@ module.exports = [
     ...commonConfig,
     output: {
       ...commonConfig.output,
+      path: path.join(__dirname, "dist/edge/js"),
+    },
+    plugins: [
+      new Dotenv({
+        path: path.resolve(__dirname, ".env"),
+        systemvars: true,
+      }),
+      new CopyPlugin({
+        patterns: [
+          { from: "manifests/manifest-edge.json", to: "../manifest.json" },
+          { from: "spawning-extension/src/assets", to: "../assets" },
+          { from: "spawning-extension/src/App.css", to: "../App.css" },
+          {
+            from: "spawning-extension/src/App.css",
+            to: "../js/App.css",
+          },
+        ],
+      }),
+      ...getHtmlPlugins(["index", "options"]),
+    ],
+  },
+  {
+    ...commonConfig,
+    output: {
+      ...commonConfig.output,
       path: path.join(__dirname, "dist/firefox/js"),
     },
     plugins: [
