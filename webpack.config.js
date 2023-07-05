@@ -10,7 +10,7 @@ const commonConfig = {
     content: "./spawning-extension/src/content.ts",
     options: "./spawning-extension/src/views/options/App.tsx",
   },
-  mode: "production",
+  mode: "development",
   module: {
     rules: [
       {
