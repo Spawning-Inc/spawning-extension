@@ -4,6 +4,7 @@
     "build-chrome": "sass sass/App.scss:spawning-extension/src/App.css --style=compressed && webpack --config webpack.config.js && mkdir -p build/chrome && cd dist/chrome && zip -r ../../build/chrome/chrome.zip .",
     "build-firefox": "sass sass/App.scss:spawning-extension/src/App.css --style=compressed && webpack --config webpack.config.js && mkdir -p build/firefox && cd dist/firefox && web-ext build --overwrite-dest -a ../../build/firefox",
     "build-edge": "sass sass/App.scss:spawning-extension/src/App.css --style=compressed && webpack --config webpack.config.js && mkdir -p build/edge && cd dist/edge && zip -r ../../build/edge/edge.zip .",
+    "build-safari": "sass sass/App.scss:spawning-extension/src/App.css --style=compressed && webpack --config webpack.config.js && mkdir -p build/safari && xcrun safari-web-extension-converter dist/chrome --project-location build/safari --app-name Spawning --bundle-identifier ai.spawning.spawning --swift --macos-only --force",
     "watch": "sass sass/App.scss:spawning-extension/src/App.css --style=compressed && webpack -w --config webpack.config.js",
     "test:puppeteer": "jest puppeteer.test.js"
   },
