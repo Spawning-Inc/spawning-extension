@@ -193,15 +193,9 @@ function App() {
             </a>{" "}
             Extension searches the current page and returns the amount of media
             in the plugin. After the search is complete, you can identify
-            whether any of the displayed data - from text to images and other
-            media - has been included in public datasets used to train AI models
-            by clicking &#34;view media&#34;. You can easily configure the
-            extension to focus on specific types of media, ensuring that your
-            search is as broad or as targeted as you need. Furthermore, the
-            Spawning generates a comprehensive data consent report, allowing you
-            to understand in detail the prevalence and use of your data in AI
-            training sets. Explore a new level of data transparency and control
-            at{" "}
+            whether any of the displayed images has been included in public
+            datasets used to train AI models by clicking &#34;view media&#34;.
+            Explore a new level of data transparency and control at{" "}
             <a href="https://spawning.ai/" target="_blank" rel="noreferrer">
               spawning.ai
             </a>
