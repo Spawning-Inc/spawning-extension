@@ -33,7 +33,7 @@ For this project, you will need to create a `.env` file at the root of your proj
 
 This project uses Webpack and SASS for its build process. We have different scripts setup for building the extension for different browsers and for various needs:
 
-- `build`: This script builds the SASS, bundles the JavaScript, and creates the production build for both Chrome and Firefox browsers. It creates a .zip file for the Chrome extension and uses `web-ext` to build the .xpi file for Firefox. Both files are put in their respective directories under the build directory.
+- `build`: This script builds the SASS, bundles the JavaScript, and creates the production build for the Chrome, Firefox and Edge browsers. It creates a .zip file for the Chrome and Edge extensions and uses `web-ext` to build the .xpi file for Firefox. Both files are put in their respective directories under the build directory.
 
   ```bash
   npm run build
@@ -49,6 +49,18 @@ This project uses Webpack and SASS for its build process. We have different scri
 
   ```bash
   npm run build-firefox
+  ```
+
+- `build-edge`: This script is the same as `build` but only for the Edge browser.
+
+  ```bash
+  npm run build-edge
+  ```
+
+- `build-safari`: This script is the same as `build` but only for the Safari browser.
+
+  ```bash
+  npm run build-safari
   ```
 
 - `watch`: This script is for development purposes. It compiles the SASS and starts the webpack development server. The server will watch for changes in your source files and recompile as needed.
