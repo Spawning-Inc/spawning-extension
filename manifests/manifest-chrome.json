@@ -1,7 +1,7 @@
 {
   "name": "Spawning",
   "description": "The Spawning Extension makes it simple for users to search if their content has been used to train AI models.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "manifest_version": 3,
   "icons": {
     "16": "assets/icons/icon16.png",
