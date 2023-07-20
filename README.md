@@ -2,6 +2,11 @@
 
 The Spawning Extension makes it simple for users to search if their content has been used to train AI models. It works by searching the current page for different types of media (text, images, and other media), displays the results to the user, and allows the user to analyze the media, and related media, in Have I Been Trained (HIBT). The displayed results in HIBT allow users to opt-out the content found via the search results, while also assisting in discovery of other content which may not have been found by the extension. The extension can be easily configured to focus on specific types of media, ensuring your search is as broad, or as targeted, as you need.
 
+## Links
+
+https://chrome.google.com/webstore/detail/gflllnclkhgldggflpajgmneddanojbo
+https://addons.mozilla.org/en-US/firefox/addon/spawning/
+
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
