@@ -5,7 +5,7 @@ The Spawning Extension makes it simple for users to search if their content has 
 ## Links
 
 [Chrome](https://chrome.google.com/webstore/detail/gflllnclkhgldggflpajgmneddanojbo)  
-[Firefox (Experimental)](https://addons.mozilla.org/en-US/firefox/addon/spawning/)
+[Firefox](https://addons.mozilla.org/en-US/firefox/addon/spawning/)
 [Edge](https://microsoftedge.microsoft.com/addons/detail/spawning/dgdkbhplbigldcpeccpjidcjabodefkk
 
 ## Getting Started
