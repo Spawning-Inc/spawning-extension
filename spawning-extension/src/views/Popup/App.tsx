@@ -170,10 +170,12 @@ function App() {
   // Function to create a link element with the given links
   const createLink = async (links: Links) => {
     const a = document.createElement("a");
-
     const newSalt = uuidv4(); // Generates a random UUID
-    const urls = (links as { images: string[] })["images"];
-    const encrypted = urls.map((url) =>
+
+    // Aggregate all links from different types into one array
+    const allLinks: string[] = Object.values(links).flat();
+
+    const encrypted = allLinks.map((url) =>
       CryptoJS.AES.encrypt(url, newSalt).toString()
     );
 

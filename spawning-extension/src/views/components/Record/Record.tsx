@@ -40,7 +40,7 @@ const Record: React.FC<RecordProps> = ({ record }) => {
           </>
         ) : null}
 
-        {record.audio !== 0 && false ? (
+        {record.audio !== 0 ? (
           <>
             <label className={styles.label}>
               <span className={styles.iconLabelWrapper}>
@@ -53,7 +53,7 @@ const Record: React.FC<RecordProps> = ({ record }) => {
           </>
         ) : null}
 
-        {record.video !== 0 && false ? (
+        {record.video !== 0 ? (
           <>
             <label className={styles.label}>
               <span className={styles.iconLabelWrapper}>
@@ -66,7 +66,7 @@ const Record: React.FC<RecordProps> = ({ record }) => {
           </>
         ) : null}
 
-        {record.text !== 0 && false ? (
+        {record.text !== 0 ? (
           <>
             <label className={styles.label}>
               <span className={styles.iconLabelWrapper}>
@@ -79,7 +79,7 @@ const Record: React.FC<RecordProps> = ({ record }) => {
           </>
         ) : null}
 
-        {record.code !== 0 && false ? (
+        {record.code !== 0 ? (
           <>
             <label className={styles.label}>
               <span className={styles.iconLabelWrapper}>
@@ -93,7 +93,7 @@ const Record: React.FC<RecordProps> = ({ record }) => {
           </>
         ) : null}
 
-        {record.other !== 0 && false ? (
+        {record.other !== 0 ? (
           <label className={styles.label}>
             <span className={styles.iconLabelWrapper}>
               <TextIcon />
