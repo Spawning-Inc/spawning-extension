@@ -48,6 +48,13 @@ const SearchLogItem: React.FC<SearchLogItemProps> = ({ record }) => {
     fetchFaviconUrl();
   }, []);
 
+  const NoMedia =
+    !record.images &&
+    !record.audio &&
+    !record.text &&
+    !record.code &&
+    !record.video;
+
   // Render the Record component
   return (
     <div className={styles.container}>
@@ -68,15 +75,15 @@ const SearchLogItem: React.FC<SearchLogItemProps> = ({ record }) => {
       </div>
       <button
         className={styles.viewResultButton}
-        disabled={record.images === 0}
+        disabled={NoMedia}
         onClick={() => {
-          if (record.images > 0) {
+          if (!NoMedia) {
             window.open(record.hibtLink || "");
           }
         }}
       >
-        {record.images === 0 ? "No Searchable Media" : "View Media"}
-        {record.images !== 0 && <ArrowUpRightIcon />}
+        {NoMedia ? "No Searchable Media" : "View Media"}
+        {!NoMedia && <ArrowUpRightIcon />}
       </button>
       <div className={styles.recordCardWrapper}>
         <div className={styles.recordCard}>

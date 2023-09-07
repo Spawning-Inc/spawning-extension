@@ -398,34 +398,6 @@ function App() {
     };
   }, []);
 
-  // useEffect(() => {
-  //   if (optionsSavedSuccessfully) {
-  //     setTimeout(() => {
-  //       setIsConfigurationOpen(false);
-  //     }, 2000);
-
-  //     return;
-  //   }
-  // }, [optionsSavedSuccessfully]);
-
-  // Function to handle checkbox change
-  // const handleConfigChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   setConfigOptions({
-  //     ...configOptions,
-  //     [e.target.id]: e.target.checked,
-  //   });
-  // };
-
-  // const saveOptions = () => {
-  //   chrome.storage.sync.set({ ...configOptions }, () => {
-  //     setOptionsSavedSuccessfully(true);
-
-  //     setTimeout(() => {
-  //       setOptionsSavedSuccessfully(false);
-  //     }, 5000);
-  //   });
-  // };
-
   const renderHeaderText = () => {
     if (scrapingStarted && !searchComplete) {
       return (
@@ -457,95 +429,68 @@ function App() {
     );
   };
 
+  const NoMedia =
+    !record.images &&
+    !record.audio &&
+    !record.text &&
+    !record.code &&
+    !record.video;
+
   return (
-    <div>
-      <body>
-        <div className={styles.wrapper}>
-          <div className={styles.header}>
-            <img src="../assets/header.svg" alt="icon" width={150} />
-            <button
-              id="info-button"
-              className={styles.infoButton}
-              onClick={handleOptionsClick}
-            >
-              <BsInfoCircle />
-            </button>
-          </div>
+    <div className={styles.wrapper}>
+      <div className={styles.header}>
+        <img src="../assets/header.svg" alt="icon" width={150} />
+        <button
+          id="info-button"
+          className={styles.infoButton}
+          onClick={handleOptionsClick}
+        >
+          <BsInfoCircle />
+        </button>
+      </div>
 
-          <div className={styles.contentWrapper}>
-            {renderHeaderText()}
-            {!scrapingStarted && scriptsActive && (
-              <button
-                id="start-scraping-button"
-                className={styles.inspectButton}
-                onClick={handleScrapeClick}
-              >
-                Inspect
-                <SearchIcon />
-              </button>
-            )}
+      <div className={styles.contentWrapper}>
+        {renderHeaderText()}
+        {!scrapingStarted && scriptsActive && (
+          <button
+            id="start-scraping-button"
+            className={styles.inspectButton}
+            onClick={handleScrapeClick}
+          >
+            Inspect <SearchIcon />
+          </button>
+        )}
 
-            {scrapingStarted && !searchComplete && (
-              <dotlottie-player
-                id="searching-animation"
-                src="../../assets/lottie/searching.lottie"
-                autoplay
-                loop
-                style={{ height: "100%", width: "100%" }}
-              />
-            )}
-          </div>
+        {scrapingStarted && !searchComplete && (
+          <dotlottie-player
+            id="searching-animation"
+            src="../../assets/lottie/searching.lottie"
+            autoplay
+            loop
+            style={{ height: "100%", width: "100%" }}
+          />
+        )}
+      </div>
 
-          {/* {!searchComplete && !scrapingStarted && (
-            <button
-              type="button"
-              className={styles.configureButton}
-              onClick={() => setIsConfigurationOpen(!isConfigurationOpen)}
-            >
-              Configure
-              <ConfigureIcon />
-            </button>
-          )}
+      {record && searchComplete && (
+        <div className={styles.recordWrapper}>
+          <Record record={record} />
 
-          {isConfigurationOpen ? (
-            <div className={styles.configAndButtonWrapper}>
-              <Config
-                configOptions={configOptions}
-                handleConfigChange={handleConfigChange}
-              />
-              {optionsSavedSuccessfully ? (
-                <div className={styles.statusMessage}>
-                  <p>Configuration saved!</p>
-                </div>
-              ) : (
-                <button className={styles.saveButton} onClick={saveOptions}>
-                  Save
-                </button>
-              )}
-            </div>
-          ) : null} */}
-
-          {record && searchComplete ? (
-            <div className={styles.recordWrapper}>
-              <Record record={record} />
-
-              <button
-                id="view-result-button"
-                className={styles.viewResultButton}
-                disabled={record.images === 0}
-                onClick={() => {
-                  if (record.images > 0) {
-                    window.open(record.hibtLink || "");
-                  }
-                }}
-              >
-                {record.images === 0 ? "No Searchable Media" : "View Media"}
-                {record.images !== 0 && <ArrowUpRightIcon />}
-              </button>
-            </div>
-          ) : null}
+          <button
+            id="view-result-button"
+            className={styles.viewResultButton}
+            disabled={NoMedia}
+            onClick={() => {
+              if (!NoMedia) {
+                window.open(record.hibtLink || "");
+              }
+            }}
+          >
+            {NoMedia ? "No Searchable Media" : "View Media"}
+            {!NoMedia && <ArrowUpRightIcon />}
+          </button>
         </div>
-      </body>
+      )}
     </div>
   );
 }
