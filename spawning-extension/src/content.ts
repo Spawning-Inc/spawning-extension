@@ -66,30 +66,30 @@ chrome.storage.sync.get(
 
 // Function to classify and store URL based on file type
 function classifyUrl(url: string): void {
-  url = url.split("?")[0]; // Remove query string
+  let baseUrl = url.split("?")[0]; // Remove query string
   if (
-    url.match(
+    baseUrl.match(
       /\.(jpeg|jpg|gif|png|svg|webp|bmp|ico|tif|tiff|eps|ai|indd|heif|raw|psd|cr2|nef|orf|sr2)$/i
     ) &&
     settings?.images
   ) {
     urls["images"].push(url);
   } else if (
-    url.match(
+    baseUrl.match(
       /\.(mp3|flac|wav|aac|ogg|oga|m4a|aac|aiff|amr|m4a|opus|wma|alac|dss|dvf|m4p|mmf|mpc|msv|ra|rm|tta|vox|weba)$/i
     ) &&
     settings?.audio
   ) {
     urls["audio"].push(url);
   } else if (
-    url.match(
+    baseUrl.match(
       /\.(mp4|webm|ogg|avi|mov|wmv|flv|mkv|3gp|3g2|h264|m4v|mpg|mpeg|rm|swf|vob|mts|m2ts|ts|qt|yuv|rmvb|asf|amv|mpg2)$/i
     ) &&
     settings?.video
   ) {
     urls["video"].push(url);
   } else if (
-    url.match(
+    baseUrl.match(
       /\.(txt|pdf|doc|docx|odt|rtf|tex|wks|wpd|wps|html|htm|md|odf|xls|xlsx|ppt|pptx|csv|xml|ods|xlr|pages|log|key|odp)$/i
     ) &&
     settings?.text
@@ -107,7 +107,7 @@ function classifyUrl(url: string): void {
   }
 
   // Extract and store the domain
-  let domain = extractDomain(url);
+  let domain = extractDomain(baseUrl);
   if (domain && !urls["domains"].includes(domain)) {
     urls["domains"].push(domain);
   }
