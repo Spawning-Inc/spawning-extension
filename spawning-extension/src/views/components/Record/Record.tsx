@@ -79,7 +79,7 @@ const Record: React.FC<RecordProps> = ({ record }) => {
           </>
         ) : null}
 
-        {record.code !== 0 ? (
+        {false ? (
           <>
             <label className={styles.label}>
               <span className={styles.iconLabelWrapper}>
