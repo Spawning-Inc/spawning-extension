@@ -16,6 +16,7 @@ import "../../global.css";
 
 const ITEMS_PER_PAGE = 10;
 const deleteRecordUrl = process.env.OPTIONS_PAGE_DELETE_RECORD_URL;
+const validateRecordUrl = process.env.OPTIONS_PAGE_VALIDATE_RECORD_URL;
 const gitUrl = process.env.OPTIONS_PAGE_GIT_URL;
 const contactUrl = process.env.OPTIONS_PAGE_CONTACT_URL;
 const tosUrl = process.env.OPTIONS_PAGE_TOS_URL;
@@ -38,29 +39,60 @@ function App() {
     to: ITEMS_PER_PAGE,
   });
 
-  // Effect to handle fetching URL records and visibility change
   useEffect(() => {
-    // Function to fetch URL records
-    const fetchUrlRecords = () => {
-      chrome.storage.local.get(null, function (items) {
-        const urlRecords = Object.entries(items).reduce((acc, [key, value]) => {
+    // Define the Record type
+    interface Record {
+      links: Links;
+      timestamp: string;
+      currentUrl: string;
+      currentTitle: string;
+      hibtLink: string;
+    }
+
+    const validateRecord = async (id: string): Promise<boolean> => {
+      // Ensure validateRecordUrl is defined
+      if (!validateRecordUrl) {
+        console.error("validateRecordUrl is undefined");
+        return false;
+      }
+
+      try {
+        // Adjust the URL to match your endpoint's format
+        const url = `${validateRecordUrl.replace('{materialized_id}', id)}`;
+        const response = await fetch(url);
+
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+
+        // Parse the response and return the 'found' property
+        const result = await response.json();
+        return result.found;
+      } catch (error) {
+        console.error("Error validating record:", error);
+        return false;
+      }
+    };
+
+    // Function to fetch URL records and validate them
+    const fetchUrlRecords = async () => {
+      chrome.storage.local.get(null, async (items: { [key: string]: any }) => {
+        let urlRecords: { [key: string]: Record } = {};
+        for (const [key, value] of Object.entries(items)) {
           if (key.startsWith("urlRecord_")) {
-            acc[key.slice(10)] = value as {
-              links: Links;
-              timestamp: string;
-              currentUrl: string;
-              currentTitle: string;
-              hibtLink: string;
-            };
+            const id = key.slice(10);
+            const isValid = await validateRecord(id);
+            if (isValid) {
+              urlRecords[id] = value as Record;
+            }
           }
-          return acc;
-        }, {} as Record<string, { links: Links; timestamp: string; currentUrl: string; currentTitle: string; hibtLink: string }>);
+        }
 
         setPagination({ ...pagination, count: Object.keys(urlRecords).length });
 
-        const transformedUrlRecords = Object.entries(urlRecords).map((i) => ({
-          id: i[0],
-          record: i[1],
+        const transformedUrlRecords = Object.entries(urlRecords).map(([id, record]) => ({
+          id,
+          record,
         }));
 
         setUrlRecords(transformedUrlRecords);
